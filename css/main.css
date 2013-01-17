@@ -1,0 +1,72 @@
+#loginPage .hero-unit {
+	float: none;
+	margin: 100px auto 0 auto;
+}
+#loggedAppState{
+	margin: 50px 0 21px 0;
+}
+.indexSep{
+	background-color: #c7c7c7;
+	line-height: 22px;
+	font-size: 22px;
+}
+.clickAble{
+	cursor: pointer;	
+}
+.itemLabels li{
+	cursor: pointer;
+	padding: 8px;
+	line-height: 20px;
+	text-align: left;
+	vertical-align: top;
+	border-top: 1px solid #DDD;	
+}
+
+.itemLabels li:nth-child(even){
+	background-color: #EBEBEB;
+}
+
+li{
+	list-style-type: none;
+}
+
+ul, ol, ul.indexs {
+	margin: 0;
+	padding: 0;
+}
+
+ul.itemLabels{
+	margin: 0;
+}
+
+.itemLabels li:hover{
+	background-color: #7f7f7f;
+	opacity:0.8;
+	filter:alpha(opacity=80); /* For IE8 and earlier */	
+}
+
+.affixMenu{
+	overflow: scroll;
+	height: 80%;
+	
+}
+#toc ul
+{
+margin: 0;
+padding: 0;
+list-style-type: none;
+text-align: center;
+}
+
+#toc ul li { display: inline; }
+
+.albumBlock{
+	display: inline-block;
+	float: left;
+	width: 200;
+	height: 250px;
+}
+div.albumBlock span{
+	padding: 5px;
+	margin: 5px;
+}

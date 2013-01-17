@@ -1,0 +1,279 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>AsubNonymous</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">       
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="stylesheet" href="css/normalize.css">
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/docs.css">
+        
+		
+    </head>
+    <body id="asubnonymousApp">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+		<!--/////////////// menu bar ;) ////////////-->
+	    <div class="navbar navbar-inverse navbar-fixed-top" data-bind="with: Asub, visible: Asub.Login.loggedIn">
+	      <div class="navbar-inner">
+	        <div class="container">
+			    <ul class="nav">
+			    	<li><a class="brand" href="#/FrontPage/newest">AsubNonymous</a></li>
+					<li><a href="#/current">Now Playing</a></li>
+				    <li class="dropdown">
+				    	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Folders <b class="caret"></b></a>
+						<ul class="dropdown-menu" data-bind="foreach: Asub.Content.rFolders">
+							<li>
+								<a href="#" data-bind="html: name, click: Asub.Content.setRootFolder"></a>
+							</li>
+						</ul>
+					</li>
+			    	<li>
+						<form class="navbar-search pull-left">
+							<input type="text" class="search-query span2" data-bind="value: Asub.Content.search" placeholder="Search" />
+						</form>
+					</li>
+				</ul>
+				
+			    <ul class="nav pull-right">
+			    	<li class="divider-vertical"></li>
+		            <li><a class="blueLink" href="#/logout" data-bind="click: Login.logout">Logout</a></li>
+				</ul>
+			</div>
+		  </div>
+		</div>	
+		<!--/////////////// End Menu Bar ////////////-->
+		
+		
+		<!-- Login Folder  perhaps make this a modal -->
+		<div class="row-fluid" id="loginPage" style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
+			<div class="span5 hero-unit">
+				<h2>AsubNonymous</h2>
+				<div class="form-horizontal">
+					<fieldset>
+						<legend> &nbsp; </legend>
+						<div class="control-group" data-bind="visible: error">
+							<div class="controls"> 
+								<span class="alert alert-error" data-bind="html: error, visible: error"></span>
+							</div>
+						</div>
+						<div class="control-group">
+						    <label class="control-label" for="inputServer">Server URL</label>
+						    <div class="controls">
+						    	<input id="inputServer" type="text" data-bind="value: Asub.server" placeholder="Server" />
+						    	<span class="help-block"> (I.E. http://subsonic.org/demo/)</span>	
+						    </div>
+						</div>
+						<div class="control-group">
+						    <label class="control-label" for="inputUsername">Username</label>
+						    <div class="controls">
+								<input id="inputUsername" type="text" data-bind="value: username" placeholder="Username" />
+							</div>
+						</div>
+						<div class="control-group">
+						    <label class="control-label" for="inputPassword">Password</label>
+						    <div class="controls">
+								<input id="inputPassword" type="password" data-bind="value: password" placeholder="Password" />
+							</div>
+						</div>
+						<div class="control-group">
+						    <div class="controls">					
+								<label class="checkbox">
+									<input type="checkbox" data-bind="value: rememberMe"> Remember me
+								</label>
+								<button class="btn btn-primary" data-bind="click: login">Login</button>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</div>
+
+		<div id="loggedAppState" style="display: none;" data-bind="with: Asub, visible: Asub.Login.loggedIn()">	
+			
+			<div class="container-fluid">
+				<div class="row-fluid">
+				<!-- Front Page -->
+				<div style="display: none;" data-bind="visible: Content.showFrontPage">
+					<div  data-bind="with: Content">
+						<div class="row-fluid">
+							
+							<div class="offset2 span2">
+								<!-- ko if: fpOffset() > 0 -->
+								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
+								<!-- /ko -->
+								<!-- ko ifnot: fpOffset() > 0 -->
+								<a class="btn btn-mini btn-primary disabled" disabled href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
+								<!-- /ko -->
+							</div>							
+							
+							<div class="span4">
+								<div class="btn-toolbar">
+								  <div class="btn-group">
+								  	<a class="btn btn-mini" href="#/FrontPage/highest"><i class="icon-star"></i> Highest Rated</a>
+								    <a class="btn btn-mini" href="#/FrontPage/newest"><i class="icon-time"></i> Newest</a>    
+								    <a class="btn btn-mini" href="#/FrontPage/frequent"><i class="icon-repeat"></i> Most Played</a>
+								    <a class="btn btn-mini" href="#/FrontPage/recent"><i class="icon-fire"></i> Most Recent</a>
+									<a class="btn btn-mini" href="#/FrontPage/random"><i class="icon-random"></i> Random</a>    
+								  </div>
+								</div>
+							</div>
+							<div class="span2">
+								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfNext"><i class="icon-arrow-right icon-white"></i>Next</a>
+							</div>
+						</div>			
+						<div class="row-fluid">
+							<div class="span8 offset2 " data-bind="foreach: frontPageItems">
+								<div class="albumBlock clickAble" data-bind="click: Asub.Content.loadContent">
+									<img class="img-rounded" data-bind="attr: { src: Asub.Content.getFPCoverArt({coverArt: coverArt }) }" />
+									<span>
+										<a href="#" class="small muted" data-bind="html: title, click: Asub.Content.loadContent"></a>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="row-fluid">
+							<!-- ko ifnot: fpOffset() > 0 -->
+							<div class="offset2 span2">
+								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
+							</div>
+							<!-- /ko -->
+							<div class="span4">
+								<div class="btn-toolbar">
+								  <div class="btn-group">
+								  	<a class="btn btn-mini" href="#/FrontPage/highest"><i class="icon-star"></i> Highest Rated</a>
+								    <a class="btn btn-mini" href="#/FrontPage/newest"><i class="icon-time"></i> Newest</a>    
+								    <a class="btn btn-mini" href="#/FrontPage/frequent"><i class="icon-repeat"></i> Most Played</a>
+								    <a class="btn btn-mini" href="#/FrontPage/recent"><i class="icon-fire"></i> Most Recent</a>
+									<a class="btn btn-mini" href="#/FrontPage/random"><i class="icon-random"></i> Random</a>    
+								  </div>
+								</div>
+							</div>
+							<div class="span2">
+								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfNext"><i class="icon-arrow-right icon-white"></i>Next</a>
+							</div>
+						</div>						
+					</div>			
+				</div>
+				<!-- Root Folders -->
+				<div  style="display: none;" data-bind="visible: Content.showRFolders">
+					<div  data-bind="with: Content">			
+						<div class="row-fluid divider">
+							<div data-bind="visible: loading">
+								
+							</div>
+							<div class="span3">
+								<div id="toc">
+									<ul  data-bind="foreach: indexs">
+										<li>
+											<a data-bind="html: name, attr: {href: '#'+name}"></a>
+										</li>
+									</ul>								
+								</div>								
+								<div id='artistsFolders' class="dropdown affixMenu">
+									<ul  class="indexs" data-bind="foreach: indexs">
+										<li>
+											<div class="indexSep nav-header">
+												<a data-bind="html: name, attr: {name: name }"></a>
+												<button class="btn btn-mini btn-primary pull-right" data-bind="click: Asub.Content.scrollTop"><i class="icon-white icon-chevron-up"></i></button>
+											</div>
+											<ul class="itemLabels" data-bind="foreach: folders">
+												<li data-bind="click: Asub.Content.goToFolder">
+													<span data-bind="html: name"></span>
+													<i class="icon-chevron-right pull-right"></i>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="dropdown span6">
+								<div class="row-fluid">
+									<span data-bind="with: Asub.Content.currentArtist()">
+										<h2 data-bind="html: name"></h2>
+									</span>
+									<div>
+										<ul class="itemLabels" data-bind="foreach: Asub.Content.currentArtistChildren">
+											<li data-bind="click: Asub.Content.loadContent">
+												<!--show different icons for different content now -->
+												<!-- ko if: isDir -->
+													<i class="icon-folder-close"></i>
+												<!-- /ko -->
+												<!-- ko ifnot: isDir -->
+													<!-- ko if: contentType == 'video/avi' -->
+														<i class="icon-film"></i>
+													<!-- /ko -->
+													<!-- ko if: contentType == 'video/mkv' -->
+														<i class="icon-film"></i>
+													<!-- /ko -->
+													<!-- ko if: contentType == 'video/mov' -->
+														<i class="icon-film"></i>
+													<!-- /ko -->
+													<!-- ko if: contentType == 'video/wmv' -->
+														<i class="icon-film"></i>
+													<!-- /ko -->
+													<!-- ko if: contentType == 'video/flv' -->
+														<i class="icon-film"></i>
+													<!-- /ko -->
+													<!-- ko if: contentType == 'video/mp4' -->
+														<i class="icon-film"></i>
+													<!-- /ko -->
+													<!-- ko if: contentType == 'audio/mpeg' -->
+														<i class="icon-music"></i>
+													<!-- /ko -->
+												<!-- /ko -->
+												<span data-bind="html: title"></span>
+
+											</li>
+										</ul>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Artist Folders -->
+				<div class="img-rounded span8" style="display: none;" data-bind="visible: Content.showFolders">
+					<div class="span3" data-bind="with: Content">				
+						<div class="row-fluid divider">
+							<div data-bind="visible: loading">
+							</div>
+							<ul class="indexs" data-bind="foreach: Asub.Content.currentArtistChildren">
+								<li>
+									<span class="itemLabel" data-bind="html: title, click: Asub.Content.loadContent"></span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
+        <script src="js/knockout.min.js"></script>
+		<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/asub.api.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/vendor/jwplayer.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+        -->
+    </body>
+</html>
