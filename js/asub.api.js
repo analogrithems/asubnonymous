@@ -117,13 +117,9 @@ Asub.API = {
         	}
 		});
 	},
-	getChatMessages: function(callback){
+	getChatMessages: function(args,callback){
 		var data = Asub.API.baseArgs();
-		var lastCheck = localStorage["chatMessageLastCheck"];
-		if(lastCheck){
-			data.since = lastCheck;
-		}
-		localStorage["chatMessageLastCheck"] = new Date().getTime();
+		if(args.since) data.since = args.since;
 		
 		$.ajax({
 			type: "GET",
@@ -132,8 +128,11 @@ Asub.API = {
 	        dataType: "jsonp",
 	        crossDomain: true,
 	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Folder Contents');
+	        	if(r['subsonic-response']){
+	        		return callback(r['subsonic-response']);
+        		}else{
+        			Asub.error('Failed to get Folder Contents');
+    			}
         	}
 		});
 	},

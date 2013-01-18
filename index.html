@@ -103,7 +103,6 @@
 				<div style="display: none;" data-bind="visible: Content.showFrontPage">
 					<div  data-bind="with: Content">
 						<div class="row-fluid">
-							
 							<div class="offset2 span2">
 								<!-- ko if: fpOffset() > 0 -->
 								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
@@ -131,19 +130,30 @@
 						<div class="row-fluid">
 							<div class="span8 offset2 " data-bind="foreach: frontPageItems">
 								<div class="albumBlock clickAble" data-bind="click: Asub.Content.loadContent">
+									<!-- ko if: coverArt -->
 									<img class="img-rounded" data-bind="attr: { src: Asub.Content.getFPCoverArt({coverArt: coverArt }) }" />
+									<!-- /ko -->
+									<!-- ko ifnot: coverArt -->
+									<span class="hero-unit img-rounded" style="width: 170px; height:165px; display: block;">
+										<i class="icon-music" ></i> No Image
+									</span>
+									<!-- /ko -->									
 									<span>
 										<a href="#" class="small muted" data-bind="html: title, click: Asub.Content.loadContent"></a>
 									</span>
 								</div>
 							</div>
 						</div>
-						<div class="row-fluid">
-							<!-- ko ifnot: fpOffset() > 0 -->
+						<div class="row-fluid" style="margin: 30px 0 0 20px;">
 							<div class="offset2 span2">
+								<!-- ko if: fpOffset() > 0 -->
 								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
-							</div>
-							<!-- /ko -->
+								<!-- /ko -->
+								<!-- ko ifnot: fpOffset() > 0 -->
+								<a class="btn btn-mini btn-primary disabled" disabled href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
+								<!-- /ko -->
+							</div>							
+							
 							<div class="span4">
 								<div class="btn-toolbar">
 								  <div class="btn-group">
@@ -193,7 +203,7 @@
 									</ul>
 								</div>
 							</div>
-							<div class="dropdown span6">
+							<div class="dropdown span5">
 								<div class="row-fluid">
 									<span data-bind="with: Asub.Content.currentArtist()">
 										<h2 data-bind="html: name"></h2>
@@ -234,7 +244,27 @@
 										</ul>
 									</div>
 								</div>
-								
+							</div>
+							<div class="span3">
+								<div id="chatBox">
+									<div  class="row-fluid">
+										<div id="chatWindow" class="span10" data-bind="foreach: Asub.Chat.messages">
+											<div>
+												<em data-bind="text: username"></em>:
+												[<i data-bind="text: time"></i>]
+												<p data-bind="text: message"></p>
+											</div>
+										</div>
+									</div>
+									<div class="row-fluid">
+										<div class="input-append">
+											<input class="span8" type="text" data-bind="value: Asub.Chat.message">
+											<button class="btn btn-primary" data-bind="click: Asub.Chat.addChatMessage">
+												<i class="icon-white icon-bullhorn"></i> Send
+											</button> 
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -75,7 +75,8 @@ Asub.init = function(){
 		if(Asub.Content.rFolders().length < 1){
 			console.log("Getting The Roots");
 			Asub.Content.getRootFolders();
-		}		
+			Asub.Chat.init();
+		}
 		Asub.Routes.run('#/FrontPage/newest');
 	}else{
 		$.jStorage.flush();
@@ -265,7 +266,15 @@ Asub.Content = {
 		console.log('getAlbumList:'+Asub.Content.pflistType());
 		Asub.API.getAlbumList({listType:Asub.Content.pflistType(), size: Asub.Content.fpCount(), offset: Asub.Content.fpOffset()},function(res){
 			if(res.status=='ok'){
-				Asub.Content.frontPageItems(res.albumList.album);
+				var albums =  $.map(res.albumList.album,
+						function(album) {
+							if(!album.coverArt){
+								album.coverArt = false;
+							}
+							return album;
+						}
+				);
+				Asub.Content.frontPageItems(albums);
 			}
 		});
 	},
@@ -299,6 +308,49 @@ Asub.Content = {
 		
 	},
 };
+
+
+Asub.Chat = {
+	messages: ko.observableArray([]),
+	message: ko.observable(),
+	lastChecked: ko.observable(0),
+	showChatWIndow: ko.observable(false),
+	
+	init: function(){
+		//Start Chat server polling cycle
+		window.setInterval(function(){
+		  /// call your function here
+		  Asub.Chat.getMessages();
+		}, 5000);		
+	},
+	getMessages: function(){
+		Asub.API.getChatMessages({since: Asub.Chat.lastChecked()},function(res){
+			if(res.status == 'ok'){
+				//chatMessages
+				if(res.chatMessages){
+					$.each(res.chatMessages, function(key,msg){
+						console.log(msg);
+						var dt = moment(new Date(msg.time));
+						msg.time = dt.format('h:mm:ss a');
+						console.log(msg);
+						Asub.Chat.messages.push(msg);
+					});
+					Asub.Chat.lastChecked(new Date().getTime());
+				}
+			}
+		});
+	},
+	addChatMessage: function(){
+		Asub.API.addChatMessage({message: Asub.Chat.message()},function(res){
+			if(res.status == 'ok'){
+				//chatMessages
+				Asub.Chat.getMessages();
+			}			
+		});
+	}
+	
+};
+
 
 Asub.Content.rFolder.subscribe(function(newValue){
 	//When the change the Folder, Update this
@@ -343,7 +395,7 @@ Asub.Routes = Sammy(function() {
 		if(Asub.Login.loggedIn() == false){
 			window.location.hash = '#/login';
 		}else{
-			Asub.Content.showRFolders(true);			
+			Asub.Content.showRFolders(true);
 		}
 
 	});
