@@ -312,45 +312,7 @@
 							</div>							
 						</div>
 					</div>
-					<div class="row-fluid">
-						<div class="span8 offset3" id="playList">
-							<table class="zebra table table-bordered table-condensed table-hover">
-								<tbody data-bind="foreach: Asub.Player.q">
-									<tr>
-										<!-- ko ifnot: isDir -->
-										<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
-										<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
-										<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>
-										<td class="clickAble" data-bind="click: Asub.Content.loadContent">
-											<!-- ko if: contentType == 'video/avi' -->
-												<i class="icon-film"></i>
-											<!-- /ko -->
-											<!-- ko if: contentType == 'video/mkv' -->
-												<i class="icon-film"></i>
-											<!-- /ko -->
-											<!-- ko if: contentType == 'video/mov' -->
-												<i class="icon-film"></i>
-											<!-- /ko -->
-											<!-- ko if: contentType == 'video/wmv' -->
-												<i class="icon-film"></i>
-											<!-- /ko -->
-											<!-- ko if: contentType == 'video/flv' -->
-												<i class="icon-film"></i>
-											<!-- /ko -->
-											<!-- ko if: contentType == 'video/mp4' -->
-												<i class="icon-film"></i>
-											<!-- /ko -->
-											<!-- ko if: contentType == 'audio/mpeg' -->
-												<i class="icon-music"></i>
-											<!-- /ko -->
-											<span data-bind="html: title" rel="tooltip" data-placement="top" data-original-title="Play"></span>
-										</td>
-										<!-- /ko -->
-									</tr>
-								</tbody>
-							</table> 
-						</div>
-					</div>					
+				
 				</div>				
 			</div>
 		</div>
