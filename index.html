@@ -222,7 +222,7 @@
 													<!--show different icons for different content now -->
 													<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
 													<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
-													<td class="clickAble" data-bind="click: Asub.Content.download"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></td>													
+													<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
 													<!-- ko if: isDir -->
 													<td  class="clickAble" data-bind="click: Asub.Content.loadContent">
 														<i class="icon-folder-close"></i>
@@ -320,7 +320,7 @@
 										<!-- ko ifnot: isDir -->
 										<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
 										<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
-										<td class="clickAble" data-bind="click: Asub.Content.download"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></td>
+										<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>
 										<td class="clickAble" data-bind="click: Asub.Content.loadContent">
 											<!-- ko if: contentType == 'video/avi' -->
 												<i class="icon-film"></i>
