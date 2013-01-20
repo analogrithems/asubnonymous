@@ -36,7 +36,15 @@ var utils = {
 		Asub.Content.showRFolders(false);
 		Asub.Content.showFolder(false);
 		Asub.Content.showFrontPage(false);
-	}
+	},
+	sleep: function(milliseconds) {
+		var start = new Date().getTime();
+		for (var i = 0; i < 1e7; i++) {
+	    	if ((new Date().getTime() - start) > milliseconds){
+	      		break;
+	    	}
+	  	}
+	}	
 };
 Asub.error = function(msg){
 	alert(msg);//for now keep it simple
@@ -131,7 +139,7 @@ Asub.Content = {
 	rFolders: ko.observableArray([]),
 	indexs: ko.observableArray([]),
 	folders: ko.observableArray([]),
-	rFolder: ko.observable(),
+	rFolder: ko.observable(false),
 	currentArtist: ko.observable(),
 	currentArtistChildren: ko.observableArray(),
 	folder: ko.observable(),
@@ -146,8 +154,10 @@ Asub.Content = {
 	fpCount: ko.observable(50),
 	pflistType: ko.observable('newest'),
 	frontPageItems: ko.observableArray(),
+	queue: ko.observableArray(),
 	setRootFolder: function(rootFolder){
 		Asub.Content.rFolder(rootFolder.id());
+		window.location.href ='#/rf';
 	},
 	getRootFolders: function(){
 		Asub.API.getFolders(function(res){
@@ -159,6 +169,7 @@ Asub.Content = {
 						}
 					);
 					Asub.Content.rFolders(Folders);
+					if(!Asub.Content.rFolder()) Asub.Content.rFolder(Asub.Content.rFolders()[0].id());
 				}else{
 					Asub.error("Failed to get Root Folder List, Status was "+ res.musicFolders.status);
 				}	
@@ -206,10 +217,17 @@ Asub.Content = {
 	},
 	goToFolder: function(media){
 		Asub.Content.getMusicDirectory(media);
-	},	
+	},
+	appendQueue: function(media){
+		Asub.Content.queue.push(media);
+	},
+	download: function(media){
+		return Asub.API.download(media);
+	},
 	loadContent: function(media){
 		if(media.isDir == true){
-			Asub.Content.getMusicDirectory(media);	
+			Asub.Content.getMusicDirectory(media);
+			window.location.href = "#/rf";
 		}else{
 			switch(media.contentType){
 				case 'audio/mpeg':
@@ -318,23 +336,27 @@ Asub.Chat = {
 	
 	init: function(){
 		//Start Chat server polling cycle
+		Asub.Chat.getMessages();
 		window.setInterval(function(){
 		  /// call your function here
 		  Asub.Chat.getMessages();
 		}, 5000);		
 	},
 	getMessages: function(){
+		console.log(Asub.Chat.lastChecked());
 		Asub.API.getChatMessages({since: Asub.Chat.lastChecked()},function(res){
 			if(res.status == 'ok'){
 				//chatMessages
 				if(res.chatMessages){
-					$.each(res.chatMessages, function(key,msg){
-						console.log(msg);
-						var dt = moment(new Date(msg.time));
-						msg.time = dt.format('h:mm:ss a');
-						console.log(msg);
-						Asub.Chat.messages.push(msg);
-					});
+					if(res.chatMessages.chatMessage && res.chatMessages.chatMessage.length > 0){
+						console.log(res.chatMessages.chatMessage);
+						for(var i = 0; i < res.chatMessages.chatMessage.length; i++){
+							var msg = res.chatMessages.chatMessage[i];
+							var dt = moment(new Date(msg.time));
+							msg.time = dt.format('YYYY/MM/DD h:mm:ss a');						
+							Asub.Chat.messages.push(msg);
+						}
+					}
 					Asub.Chat.lastChecked(new Date().getTime());
 				}
 			}
@@ -356,8 +378,6 @@ Asub.Content.rFolder.subscribe(function(newValue){
 	//When the change the Folder, Update this
 	Asub.Content.loading(true);
 	Asub.Content.getIndex();
-	window.location.hash = '#/rf';
-	
 });
 
 Asub.Content.folder.subscribe(function(newValue){
@@ -395,6 +415,7 @@ Asub.Routes = Sammy(function() {
 		if(Asub.Login.loggedIn() == false){
 			window.location.hash = '#/login';
 		}else{
+			if(Asub.Content.rFolders().length < 1) Asub.Content.getRootFolders();
 			Asub.Content.showRFolders(true);
 		}
 
@@ -421,4 +442,5 @@ $(document).ready(function(){
 	Asub.init();//check for saved info in a cookie or local storage
 	ko.applyBindings(Asub, $('#asubnonymousApp')[0]);
 	$('#navbar').affix();
+	$('#asubnonymousApp').tooltip({selector: "*[rel=tooltip]"});
 });
