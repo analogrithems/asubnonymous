@@ -36,6 +36,7 @@ var utils = {
 		Asub.Content.showRFolders(false);
 		Asub.Content.showFolder(false);
 		Asub.Content.showFrontPage(false);
+		Asub.Player.showPlayer(false);
 	},
 	sleep: function(milliseconds) {
 		var start = new Date().getTime();
@@ -84,6 +85,7 @@ Asub.init = function(){
 			console.log("Getting The Roots");
 			Asub.Content.getRootFolders();
 			Asub.Chat.init();
+			Asub.Player.init();
 		}
 		Asub.Routes.run('#/FrontPage/newest');
 	}else{
@@ -154,7 +156,6 @@ Asub.Content = {
 	fpCount: ko.observable(50),
 	pflistType: ko.observable('newest'),
 	frontPageItems: ko.observableArray(),
-	queue: ko.observableArray(),
 	setRootFolder: function(rootFolder){
 		Asub.Content.rFolder(rootFolder.id());
 		window.location.href ='#/rf';
@@ -217,9 +218,6 @@ Asub.Content = {
 	},
 	goToFolder: function(media){
 		Asub.Content.getMusicDirectory(media);
-	},
-	appendQueue: function(media){
-		Asub.Content.queue.push(media);
 	},
 	download: function(media){
 		return Asub.API.download(media);
@@ -324,9 +322,48 @@ Asub.Content = {
 			Asub.Content.fpOffset(ofst);	
 		}
 		
-	},
+	}
 };
 
+Asub.Player = {
+	showPlayer: ko.observable(false),
+	q: ko.observableArray([]),
+	maxBitRate: false,
+	init: function(){
+		//reload playlist from cache
+		var queue = $.jStorage.get('Asub.Player.q');
+		if(queue){
+			if(queue.length > 0){
+				Asub.Player.q(queue);
+			}
+		}
+	},
+	addToPlayList: function(item){
+		if(item.hasOwnProperty('isDir')  && item.isDir){
+			//Get Children
+			Asub.API.getMusicDirectory(item.id,function(res){
+				if(res.status == 'ok'){
+					if(res.directory){
+						for(var i = 0; i < res.directory.child.length; i++){
+							Asub.Player.addToPlayList(res.directory.child[i]);	
+						}
+					}else{
+						Asub.error("Failed to get Folder");
+					}	
+				}else{
+					Asub.error("Failed to get Folder!");
+				}
+			});
+			
+		}else{
+			item.played = false;
+			Asub.Player.q.push(item);
+		} 
+	},
+	remveFromPlaylist: function(item){
+		Asub.Player.q.remove(item);
+	}
+};
 
 Asub.Chat = {
 	messages: ko.observableArray([]),
@@ -373,6 +410,51 @@ Asub.Chat = {
 	
 };
 
+
+Asub.Player.showPlayer.subscribe(function(pl){
+	if(Asub.Player.showPlayer() == true){
+		var pl = [];
+		for(var t = 0; t < Asub.Player.q().length; t++ ){
+			var item = Asub.Player.q()[t];
+			var i = {};
+			if(item.coverArt) i.image = Asub.Content.getFPCoverArt({coverArt: item.coverArt });
+			if(item.title) i.title = item.title;
+			i.sources = [];
+			i.mediaid = item.id;
+			var st = {};
+			var m = {id: item.id};
+			if(item.suffix){
+				st.type = item.suffix;
+				m.format = item.suffix;	
+			}
+			if(Asub.Player.maxBitRate){
+				m.maxBitRate = Asub.Player.maxBitRate
+			}
+			st.file = Asub.API.stream(m);
+			i.sources.push(st);
+			pl.push(i);
+		}
+		//return pl;
+		console.log($.toJSON(pl));
+		jwplayer("asubPlayer").setup({
+			playlist: pl,
+			height: 360,
+		    listbar: {
+		        position: 'right',
+		        size: 320
+		    },
+		    width: 960			
+		});
+	}else{
+		return false;
+	}	
+});
+
+Asub.Player.q.subscribe(function(newValue){
+	//on change save to local storage
+	console.log(newValue);
+	$.jStorage.set('Asub.Player.q',newValue);
+});
 
 Asub.Content.rFolder.subscribe(function(newValue){
 	//When the change the Folder, Update this
@@ -429,6 +511,10 @@ Asub.Routes = Sammy(function() {
 		utils.hideall();
 		Asub.Login.logout();
 	});
+	this.get('#/Player', function() {
+		utils.hideall();
+		Asub.Player.showPlayer(true);
+	});	
 	this.get('#/FrontPage/:listType',function(){
 		utils.hideall();
 		Asub.Content.showFrontPage(true);
@@ -443,4 +529,5 @@ $(document).ready(function(){
 	ko.applyBindings(Asub, $('#asubnonymousApp')[0]);
 	$('#navbar').affix();
 	$('#asubnonymousApp').tooltip({selector: "*[rel=tooltip]"});
+	var asubPlayer =  jwplayer("asubPlayer");
 });

@@ -69,12 +69,17 @@ Asub.API = {
         	}       
 		});
 	},
+	download: function(args){
+		var data = $.extend(Asub.API.baseArgs(), args);
+
+		var Content = Asub.server() + '/rest/download.view?'+Asub.API.serialize(data);
+		return Content;
+	},	
 	stream: function(args){
 		var data = $.extend(Asub.API.baseArgs(), args);
 
 		var Content = Asub.server() + '/rest/stream.view?'+Asub.API.serialize(data);
-		console.log(Content);
-		jwplayer("jwPlayer").setup({file: Content});
+		return Content;
 	},
 	serialize: function(obj, prefix) {
 	    var str = [];
