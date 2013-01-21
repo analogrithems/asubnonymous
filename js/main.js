@@ -36,6 +36,7 @@ var utils = {
 		Asub.Content.showRFolders(false);
 		Asub.Content.showFolder(false);
 		Asub.Content.showFrontPage(false);
+		Asub.Search.showSearchResults(false);
 		Asub.Player.showPlayer(false);
 	},
 	sleep: function(milliseconds) {
@@ -145,13 +146,14 @@ Asub.Content = {
 	currentArtist: ko.observable(),
 	currentArtistChildren: ko.observableArray(),
 	folder: ko.observable(),
-	search: ko.observable(),
+
 	previous: ko.observable(),
 	loading: ko.observable(false),
 	refreshNext: false,
 	showRFolders: ko.observable(false),
 	showFolder: ko.observable(false),
 	showFrontPage: ko.observable(false),
+
 	fpOffset: ko.observable(0),
 	fpCount: ko.observable(50),
 	pflistType: ko.observable('newest'),
@@ -272,6 +274,7 @@ Asub.Content = {
 			}
 		});		
 	},
+
 	scrollTop: function(){
 		console.log('scrolling');
 		$('#artistsFolders').animate({
@@ -323,6 +326,26 @@ Asub.Content = {
 		}
 		
 	}
+};
+Asub.Search = {
+	query: ko.observable(),
+	albumSearchResults: ko.observableArray(),
+	songSearchResults: ko.observableArray(),
+	artistSearchResults: ko.observableArray(),
+	showSearchResults: ko.observable(false),	
+	doSearch: function(s){
+		console.log(s);
+		Asub.API.search2({
+			query: s
+		},
+		function(res){
+			if(res.status == 'ok'){
+				Asub.Search.albumSearchResults(res.searchResult2.album);
+				Asub.Search.songSearchResults(res.searchResult2.song);
+				Asub.Search.artistSearchResults(res.searchResult2.artist);
+			}
+		});
+	},	
 };
 
 Asub.Player = {
@@ -488,15 +511,7 @@ Asub.Content.fpOffset.subscribe(function(newValue){
 Asub.Content.pflistType.subscribe(function(newValue){
 	Asub.Content.getAlbumList();
 });
-Asub.Content.search.subscribe(function(newValue){
-	//When the change the Folder, Update this
-	if(newValue){
-		
-	}else{
-		
-	}
-	
-});
+
 
 //Routes
 Asub.Routes = Sammy(function() {
@@ -533,6 +548,11 @@ Asub.Routes = Sammy(function() {
 		Asub.Content.showFrontPage(true);
 		Asub.Content.pflistType(this.params['listType']);
 		Asub.Content.getAlbumList();
+	})
+	this.get('#/Search/:q',function(){
+		utils.hideall();
+		Asub.Search.doSearch(this.params['q']);
+		Asub.Search.showSearchResults(true);
 	})
 });
 

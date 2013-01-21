@@ -42,10 +42,13 @@
 									</li>
 								</ul>
 							</li>
+							<li>
+								<div class="navSearch input-append">
+									<input type="text" class="span2"  data-bind="value:  Asub.Search.query" placeholder="Search" />
+									<a class="btn btn-small" data-bind="attr: {href: '#/Search/' + Asub.Search.query()}"><i class="icon-search"></i></a>
+								</div>								
+							</li>
 						</ul>
-						<form class="navbar-search pull-left" action="">
-							<input type="text" class="search-query span2" placeholder="Search">
-						</form>
 						<ul class="nav pull-right">
 							<li class="divider-vertical"></li>
 							<li><a class="blueLink" href="#/logout" data-bind="click: Login.logout">Logout</a></li>
@@ -314,6 +317,75 @@
 					</div>
 				
 				</div>				
+
+				<!-- Search -->
+				<div id="playerWindow" data-bind="visible: Asub.Search.showSearchResults">
+					<div class="row-fluid">
+						<div  class="span8 offset2">
+							<h2>Songs</h2>
+							<table class="zebra table table-bordered table-condensed table-hover">
+								<thead>
+									<td colspan="3"></td>
+									<th>Artist</th>
+									<th>Album</th>
+									<th>Song</th>
+									<th>Genre</th>
+									<th>Year</th>
+								</thead>
+								<tbody data-bind="foreach: Asub.Search.songSearchResults">
+									<tr>
+										<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
+										<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
+										<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
+										<td data-bind="html: artist, click: Asub.Content.loadContent"></td>
+										<td data-bind="html: album, click: Asub.Content.loadContent"></td>
+										<td data-bind="html: title, click: Asub.Content.loadContent"></td>
+										<td data-bind="html: genre, click: Asub.Content.loadContent"></td>
+										<td data-bind="html: year, click: Asub.Content.loadContent"></td>
+									</tr>
+								</tbody>
+							</table>							
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div  class="span8 offset2">
+							<h2>Album</h2>
+							<table class="zebra table table-bordered table-condensed table-hover">
+								<thead>
+									<td colspan="3"></td>
+									<th>Album</th>
+								</thead>
+								<tbody data-bind="foreach: Asub.Search.albumSearchResults">
+									<tr>
+										<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
+										<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
+										<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
+										<td data-bind="html: album, click: Asub.Content.loadContent"></td>
+									</tr>
+								</tbody>
+							</table>							
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div  class="span8 offset2">
+							<h2>Artist</h2>
+							<table class="zebra table table-bordered table-condensed table-hover">
+								<thead>
+									<td colspan="3"></td>
+									<th>Artist</th>
+								</thead>
+								<tbody data-bind="foreach: Asub.Search.artistSearchResults">
+									<tr>
+										<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
+										<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
+										<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
+										<td data-bind="html: artist, click: Asub.Content.loadContent"></td>
+									</tr>
+								</tbody>
+							</table>							
+						</div>
+					</div>
+				</div>		
 			</div>
 		</div>
 
