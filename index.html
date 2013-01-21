@@ -366,25 +366,7 @@
 							</table>							
 						</div>
 					</div>
-					<div class="row-fluid">
-						<div  class="span8 offset2">
-							<h2>Artist</h2>
-							<table class="zebra table table-bordered table-condensed table-hover">
-								<thead>
-									<td colspan="3"></td>
-									<th>Artist</th>
-								</thead>
-								<tbody data-bind="foreach: Asub.Search.artistSearchResults">
-									<tr>
-										<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
-										<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
-										<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
-										<td data-bind="html: artist, click: Asub.Content.loadContent"></td>
-									</tr>
-								</tbody>
-							</table>							
-						</div>
-					</div>
+
 				</div>		
 			</div>
 		</div>
