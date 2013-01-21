@@ -81,6 +81,12 @@ Asub.API = {
 		var Content = Asub.server() + '/rest/stream.view?'+Asub.API.serialize(data);
 		return Content;
 	},
+	hls: function(args){
+		var data = $.extend(Asub.API.baseArgs(), args);
+
+		var Content = Asub.server() + '/rest/hls.m3u8?'+Asub.API.serialize(data);
+		return Content;
+	},
 	serialize: function(obj, prefix) {
 	    var str = [];
 	    for(var p in obj) {

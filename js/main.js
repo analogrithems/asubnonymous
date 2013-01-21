@@ -424,14 +424,27 @@ Asub.Player.showPlayer.subscribe(function(pl){
 			var st = {};
 			var m = {id: item.id};
 			if(item.suffix){
-				st.type = item.suffix;
-				m.format = item.suffix;	
+				st.type = item.suffix;//jwplayer format
+				m.format = item.suffix;//stream format
 			}
 			if(Asub.Player.maxBitRate){
 				m.maxBitRate = Asub.Player.maxBitRate
 			}
 			st.file = Asub.API.stream(m);
 			i.sources.push(st);
+			if(item.isVideo){
+				//hls format also
+				st.file = Asub.API.hls(m);
+				st.type = 'hls';
+				i.sources.push(st);
+				//flv format also
+				m.format = 'flv';
+				st.file = Asub.API.stream(m);
+				st.type = 'flv';
+				i.sources.push(st);					
+			}
+		
+			
 			pl.push(i);
 		}
 		//return pl;
