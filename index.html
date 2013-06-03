@@ -8,60 +8,91 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="stylesheet" href="css/normalize.css">
-        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/docs.css">
-        
-		
+		<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+		<link href="https://netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/main.css"> 
+        		
     </head>
     <body id="asubnonymousApp">
+
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-		<!--/////////////// menu bar ;) ////////////-->
-		<div class="navbar navbar-fixed-top" data-dropdown="dropdown" data-bind="with: Asub, visible: Asub.Login.loggedIn">
-			<div class="navbar-inner">
-				<div class="container">
-					
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					
-					<div class="nav-collapse collapse navbar-responsive-collapse">
-						<ul class="nav">
-							<li><a class="brand" href="#/FrontPage/newest">Asubnonymous</a></li>
-							<li><a href="#/Player">Now Playing</a></li>
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Folders <b class="caret"></b></a>
-								<ul class="dropdown-menu" data-bind="foreach: Asub.Content.rFolders">
-									<li>
-										<a href="#/rf" data-bind="html: name, click: Asub.Content.setRootFolder"></a>
-									</li>
-								</ul>
-							</li>
-							<li>
-								<div class="navSearch input-append">
-									<input type="text" class="span2"  data-bind="value:  Asub.Search.query" placeholder="Search" />
-									<a class="btn btn-small" data-bind="attr: {href: '#/Search/' + Asub.Search.query()}"><i class="icon-search"></i></a>
-								</div>								
-							</li>
-						</ul>
-						<ul class="nav pull-right">
-							<li class="divider-vertical"></li>
-							<li><a class="blueLink" href="#/logout" data-bind="click: Login.logout">Logout</a></li>
-						</ul>
-					</div><!-- /.nav-collapse -->
-				</div>
-			</div><!-- /navbar-inner -->
-		</div>
+        <!--/////////////// menu bar ;) ////////////-->
+        <div class="navbar navbar-fixed-top" data-dropdown="dropdown" data-bind="with: Asub, visible: Asub.Login.loggedIn">
+                <div class="navbar-inner">
+                        <div class="container">
 
-		<!--/////////////// End Menu Bar ////////////-->
+                                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                </a>
+                                <a class="brand" href="#/FrontPage/newest"><i class="icon-home"></i>Asub</a>
+                                <ul class="nav pull-right">
+                                		<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
+										<li>
+										        <a class="icon-play-circle" style="font-size: 20px" href="#" data-bind="click: function(){ Asub.Player.showVideoPlayer(true); }">
+
+										        </a>
+										</li>                                        		
+                                        <li class="divider-vertical"></li>                                        		
+                                		<!-- /ko  -->
+                                
+                                        <li>
+                                                <a class="icon-comments-alt" style="font-size: 20px" href="#/Chat">
+                                                        <span data-bind="visible: Asub.Chat.unseen() > 0" class="ontop">
+                                                                <i data-bind="text: Asub.Chat.unseen"></i>
+                                                        </span>
+                                                        <small>Chat</small>
+                                                </a>
+                                        </li>
+                                        <li class="divider-vertical"></li>
+                                        <li><a class="blueLink" href="#/logout" data-bind="click: Login.logout">Logout</a></li>
+                                </ul>
+
+                                <div class="nav-collapse collapse navbar-responsive-collapse">
+                                        <ul class="nav">
+
+                                                <li class="dropdown">
+                                                        <a class="dropdown-toggle" id="playList" role="button" data-toggle="dropdown" href="#">Playlist
+                                                        	<b class="caret"></b>
+                                                        </a>
+
+                                                        <ul class="dropdown-menu span3" role="menu" aria-labelledby="playList" data-bind="foreach: Asub.Player.q">
+                                                                <li data-bind="class: {played: played == true}">
+                                                                        <span class="clickable" data-bind="click: Asub.Player.play"><i class="icon-play"></i></span>
+                                                                        <span class="clickable" data-bind="html: title,click: Asub.Player.play"></span>
+                                                                        <span class="clickable pull-right" data-bind="click: Asub.Player.remove"><i class="icon-minus"></i></span>
+                                                                </li>
+                                                        </ul>
+                                                </li>
+												<li class="divider-vertical"></li>
+                                                <li class="dropdown">
+                                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Folders <b class="caret"></b></a>
+                                                        <ul class="dropdown-menu" data-bind="foreach: Asub.Content.rFolders">
+                                                                <li>
+                                                                        <a href="#/rf" data-bind="html: name, click: Asub.Content.setRootFolder"></a>
+                                                                </li>
+                                                        </ul>
+                                                </li>
+                                                <li class="divider-vertical"></li>
+                                                
+                                                <li>
+                                                        <div class="navSearch input-append">
+                                                                <input type="text" class="span2 searchBox"  data-bind="value:  Asub.Search.query" placeholder="Search" />
+                                                                <a class="btn btn" data-bind="attr: {href: '#/Search/' + Asub.Search.query()}"><i class="icon-search"></i></a>
+                                                        </div>
+                                                </li>
+                                        </ul>
+                                </div><!-- /.nav-collapse -->
+                        </div>
+                </div><!-- /navbar-inner -->
+        </div>
+        <!--/////////////// End Menu Bar ////////////-->
 		
-		
-		<!-- Login Folder  perhaps make this a modal -->
+		<!-- Login page  perhaps make this a modal -->
 		<div class="row-fluid" id="loginPage" style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
 			<div class="span6 offset3 bsBox loginBox">
 				<h2>AsubNonymous</h2>
@@ -104,83 +135,182 @@
 				</div>
 			</div>
 		</div>
+		<!-- End Login Page -->
 
+
+		<!-- Main App -->
 		<div id="loggedAppState" style="display: none;" data-bind="with: Asub, visible: Asub.Login.loggedIn()">	
 			
 			<div class="container-fluid">
 				<div class="row-fluid">
 				<!-- Front Page -->
-				<div style="display: none;" data-bind="visible: Content.showFrontPage">
-					<div  data-bind="with: Content">
+				<div style="display: none;" class="container" data-bind="visible: Content.showFrontPage">
+					<div  class="offset1 span10" data-bind="with: Content">
+						<div class="row-fluid">					
+							<div>
+								<ul class="pager">
+								  <li class="previous" data-bind="css: { disabled: fpOffset() < 1 }">
+								    <a href="#" data-bind="click: Asub.Content.pfPrevious">
+										<i class="icon-arrow-left icon-white"></i> Previous
+									</a>
+								  </li>
+								  <li class="next">
+									<a  href="#" data-bind="click: Asub.Content.pfNext">Next 
+										<i class="icon-arrow-right icon-white"></i>
+									</a>
+								  </li>
+								</ul>								
+							</div>
+						</div>
 						<div class="row-fluid">
-							<div class="offset2 span2">
-								<!-- ko if: fpOffset() > 0 -->
-								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
-								<!-- /ko -->
-								<!-- ko ifnot: fpOffset() > 0 -->
-								<a class="btn btn-mini btn-primary disabled" disabled href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
-								<!-- /ko -->
-							</div>							
-							
-							<div class="span4">
-								<div class="btn-toolbar">
-								  <div class="btn-group">
-								  	<a class="btn btn-mini" href="#/FrontPage/highest"><i class="icon-star"></i> Highest Rated</a>
-								    <a class="btn btn-mini" href="#/FrontPage/newest"><i class="icon-time"></i> Newest</a>    
-								    <a class="btn btn-mini" href="#/FrontPage/frequent"><i class="icon-repeat"></i> Most Played</a>
-								    <a class="btn btn-mini" href="#/FrontPage/recent"><i class="icon-fire"></i> Most Recent</a>
-									<a class="btn btn-mini" href="#/FrontPage/random"><i class="icon-random"></i> Random</a>    
-								  </div>
+							<div class="span4 offset6">
+								<div class="btn-group">
+									<button class="btn btn-mini" data-bind="click: function(){window.location.hash = '#/FrontPage/newest'; return false;}, css: {active: pflistType() == 'highest'}">
+										<i class="icon-time"></i> Recently Added
+									</button>									    
+									<button class="btn dropdown-toggle" data-toggle="dropdown">
+										<span class="caret"></span>
+									</button>
+								    <ul class="dropdown-menu">
+								      <li>
+								        <a href='#' data-bind="click: function(){window.location.hash = '#/FrontPage/highest'; return false;}, css: {active: pflistType() == 'highest'}">
+								        	<i class="icon-star"></i> Highest Rated
+								        </a>
+								      </li>
+								      <li class="divider"></li>
+								      <li>
+								        <a  href="#" data-bind="click: function(){window.location.hash = '#/FrontPage/frequent'; return false;},css: {active: pflistType() == 'frequent'}">
+									    	<i class="icon-repeat"></i> Frequently Played
+									    </a>
+								      </li>
+								      <li class="divider"></li>
+								      <li>
+								        <a  href="#" data-bind="click: function(){window.location.hash = '#/FrontPage/recent'; return false;},css: {active: pflistType() == 'recent'}">
+									    	<i class="icon-fire"></i> Recently Played
+									    </a>
+								      </li>
+								      <li class="divider"></li>
+								      <li>
+								        <a  href="#" data-bind="click: function(){window.location.hash = '#/FrontPage/random'; return false;},css: {active: pflistType() == 'random'}">
+											<i class="icon-random"></i> Random
+										</a> 
+								      </li>
+								      <li class="divider"></li>
+								      <li>
+								      	<a href="#" data-bind="click: function(){window.location.hash = '#/FrontPage/alphabeticalByName'; return false;},css:{active: pflistType() == 'alphabeticalByName'}">
+											Sort By Name
+										</a>								      	
+								      </li>
+								      <li class="divider"></li>
+									  <li>
+										<a href="#" data-bind="click: function(){window.location.hash = '#/FrontPage/alphabeticalByArtist'; return false;},css:{active: pflistType() == 'alphabeticalByArtist'}">
+											Sort By Artist
+										</a>								      	
+									  </li>								      
+								    </ul>
 								</div>
+							</div>						
+						</div>
+
+					<div class="row-fluid" id="mainwrapper">		
+						<div class="span12">	
+							<ul class="thumbnails" data-bind="foreach: frontPageItems">
+								<li class="span3 clickAble" data-bind="click: Asub.Content.loadContent">
+									<div class="thumbnail box">
+										<div>
+											<!-- ko if: coverArt -->
+												<span class=" img-rounded" style="width: 200px; height:170px; display: block;">
+													<img id="coverArt" data-src="holder.js/300x170" alt="" data-bind="attr: { src: Asub.Content.getFPCoverArt({coverArt: coverArt }) }" />
+												</span>
+											<!-- /ko -->
+											<!-- ko ifnot: coverArt -->
+												<span class=" img-rounded" style="width: 200px; height:170px; display: block;">
+													<i class="icon-music"></i> No Image
+													<img src="img/Tardar_NoCoverArt.jpg" id="noCoverArt" alt="" width="150px" height="150px">
+												</span>
+											<!-- /ko -->	
+
+												<div class="caption simple-caption"> 
+													<div class="heading">
+														<a href="#" class="title small" data-bind="html: title, click: Asub.Content.loadContent"></a>
+													</div>
+													<div class="btn-group">
+														<button class="btn btn-mini btn-inverse" type="button"><i class="icon-play"></i>Play</button>
+														<button class="btn btn-mini btn-info" type="button"><i class="icon-plus"></i> Playlist</button>
+														<button class="btn btn-mini btn-primary" type="button"><i class="icon-cloud-download"></i> Download</button>			
+													</div>
+												</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					
+						<div class="row-fluid">					
+							<div>
+								<ul class="pager">
+                                  <li class="previous" data-bind="css: { disabled: fpOffset() < 1 }">
+                                    <a href="#" data-bind="click: Asub.Content.pfPrevious">
+                                                <i class="icon-arrow-left icon-white"></i> Previous
+                                        </a>
+                                  </li>
+								  <li class="next">
+									<a href="#" data-bind="click: Asub.Content.pfNext">Next 
+										<i class="icon-arrow-right icon-white"></i>
+									</a>
+								  </li>
+								</ul>								
 							</div>
-							<div class="span2">
-								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfNext">Next <i class="icon-arrow-right icon-white"></i></a>
-							</div>
-						</div>			
-						<div class="row-fluid">
-							<div class="span8 offset2 " data-bind="foreach: frontPageItems">
-								<div class="albumBlock clickAble" data-bind="click: Asub.Content.loadContent">
-									<!-- ko if: coverArt -->
-									<img class="img-rounded" data-bind="attr: { src: Asub.Content.getFPCoverArt({coverArt: coverArt }) }" />
-									<!-- /ko -->
-									<!-- ko ifnot: coverArt -->
-									<span class="hero-unit img-rounded" style="width: 170px; height:165px; display: block;">
-										<i class="icon-music" ></i> No Image
-									</span>
-									<!-- /ko -->									
-									<span>
-										<a href="#" class="small muted" data-bind="html: title, click: Asub.Content.loadContent"></a>
-									</span>
+						</div>
+
+					</div>			
+				</div>
+				<!-- ////// End Front Page ///////-->
+				<!-- Chat Page -->
+				<div  style="display: none;" data-bind="visible: Chat.showChatWindow">
+					<div  data-bind="with: Chat">			
+						<div class="row-fluid divider">				
+							<div class="span8">
+								<div id="chatBox">
+									<div  class="row-fluid">
+										<div id="chatWindow" class="span10" data-bind="foreach: messages">
+											<div class="chatMessage">
+												<div class="span11">
+													<img class="chatImage" data-bind="attr: {src: Asub.Chat.showAvatar(username)}" 
+														onerror='this.onerror = null; this.src="img/noAvatar.png"; this.height="48"; this.width="48";'/>
+													<strong data-bind="text: username"></strong>
+													<p class="chatTime"> @ <i data-bind="text: time"></i></p>
+													<p class="chatText" data-bind="text: message"></p>
+												</div>
+												<div class="remove span1 pull-right">
+													<button class="btn btn-danger" data-bind="click: Asub.Chat.removeMessage">
+														<i class="icon-remove" ></i>
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row-fluid">
+										<div class="input-append">
+											<input class="span8" type="text" data-bind="value: message">
+											<button class="btn btn-primary" data-bind="click: addChatMessage">
+												<i class="icon-white icon-bullhorn"></i> Send
+											</button> 
+										</div>
+									</div>
+									<div class="row-fluid">
+										<button class="btn btn-success" data-bind="click: clearMessages">
+											Clear All Messages
+											<i class="icon-remove"></i>
+										</button>
+									</div>									
 								</div>
 							</div>
 						</div>
-						<div class="row-fluid" style="margin: 30px 0 0 20px;">
-							<div class="offset2 span2">
-								<!-- ko if: fpOffset() > 0 -->
-								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
-								<!-- /ko -->
-								<!-- ko ifnot: fpOffset() > 0 -->
-								<a class="btn btn-mini btn-primary disabled" disabled href="#" data-bind="click: Asub.Content.pfPrevious"><i class="icon-arrow-left icon-white"></i>Previous</a>
-								<!-- /ko -->
-							</div>							
-							
-							<div class="span4">
-								<div class="btn-toolbar">
-								  <div class="btn-group">
-								  	<a class="btn btn-mini" href="#/FrontPage/highest"><i class="icon-star"></i> Highest Rated</a>
-								    <a class="btn btn-mini" href="#/FrontPage/newest"><i class="icon-time"></i> Newest</a>    
-								    <a class="btn btn-mini" href="#/FrontPage/frequent"><i class="icon-repeat"></i> Most Played</a>
-								    <a class="btn btn-mini" href="#/FrontPage/recent"><i class="icon-fire"></i> Most Recent</a>
-									<a class="btn btn-mini" href="#/FrontPage/random"><i class="icon-random"></i> Random</a>    
-								  </div>
-								</div>
-							</div>
-							<div class="span2">
-								<a class="btn btn-mini btn-primary" href="#" data-bind="click: Asub.Content.pfNext">Next <i class="icon-arrow-right icon-white"></i></a>
-							</div>
-						</div>						
-					</div>			
-				</div>
+					</div>
+				</div>			
+				<!-- //End Chat Page /// -->
 				<!-- Root Folders -->
 				<div  style="display: none;" data-bind="visible: Content.showRFolders">
 					<div  data-bind="with: Content">			
@@ -223,7 +353,7 @@
 											<tbody data-bind="foreach: Asub.Content.currentArtistChildren">
 												<tr>
 													<!--show different icons for different content now -->
-													<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
+													<td class="clickAble" data-bind="click: Asub.Player.addToPlayListAndPlay" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
 													<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
 													<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
 													<!-- ko if: isDir -->
@@ -267,30 +397,10 @@
 									</div>
 								</div>
 							</div>
-							<div class="span3">
-								<div id="chatBox">
-									<div  class="row-fluid">
-										<div id="chatWindow" class="span10" data-bind="foreach: Asub.Chat.messages">
-											<div>
-												<em data-bind="text: username"></em>:
-												[<i data-bind="text: time"></i>]
-												<p data-bind="text: message"></p>
-											</div>
-										</div>
-									</div>
-									<div class="row-fluid">
-										<div class="input-append">
-											<input class="span8" type="text" data-bind="value: Asub.Chat.message">
-											<button class="btn btn-primary" data-bind="click: Asub.Chat.addChatMessage">
-												<i class="icon-white icon-bullhorn"></i> Send
-											</button> 
-										</div>
-									</div>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>
+				<!-- ////// END Root Folders ////// -->
 				
 				<!-- Artist Folders -->
 				<div class="img-rounded span8" style="display: none;" data-bind="visible: Content.showFolders">
@@ -308,14 +418,19 @@
 				</div>
 				
 				<!-- Player -->
-				<div id="playerWindow" data-bind="visible: Asub.Player.showPlayer">
-					<div class="row-fluid">
-						<div  class="span8 offset3">
-							<div id="asubPlayer">						
-							</div>							
+				<div id="playerWindow" style="display: none" data-bind="slideVisible: Asub.Player.showPlaylist">
+					
+					<div class="row-fluid" data-bind="with: Asub.Player">
+						<div  class="bsBox loginBox span6 offset3">
+							<ul class="dropdown-menu" role="menu" aria-labelledby="playLIst" data-bind="foreach: Asub.Player.q">
+								<li data-bind="class: {played: played == true}">
+									<button class="btn-mini btn-inverse" data-bind="click: Asub.Player.play"><i class="icon-white icon-play"></i></button>
+									<button class="btn-mini btn-inverse" data-bind="click: Asub.Player.remove"><i class="icon-white icon-minus"></i></button>
+									<span data-bind="html: title,click: Asub.Player.play"></span>
+								</li>
+							</ul>						
 						</div>
 					</div>
-				
 				</div>				
 
 				<!-- Search -->
@@ -343,7 +458,7 @@
 											</thead>
 											<tbody data-bind="foreach: Asub.Search.songSearchResults">
 												<tr>
-													<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
+													<td class="clickAble" data-bind="click: Asub.Player.play" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
 													<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
 													<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
 													<td data-bind="html: artist, click: Asub.Content.loadContent"></td>
@@ -366,7 +481,7 @@
 											</thead>
 											<tbody data-bind="foreach: Asub.Search.albumSearchResults">
 												<tr>
-													<td class="clickAble" data-bind="click: Asub.Content.loadContent" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
+													<td class="clickAble" data-bind="click: Asub.Player.addToPlayListAndPlay" ><i class="icon-play" rel="tooltip" data-placement="top" data-original-title="Play"  title="Play"></i></td>
 													<td class="clickAble" data-bind="click: Asub.Player.addToPlayList"  ><i class="icon-tasks" rel="tooltip" data-placement="top" data-original-title="Add To Playlist" title="Add To Playlist"></i></td>
 													<td><a  class="clickAble" data-bind="attr: {href: Asub.Content.download()}"  ><i class="icon-arrow-down" rel="tooltip" data-placement="top" data-original-title="Download"></i></a></td>													
 													<td data-bind="html: album, click: Asub.Content.loadContent"></td>
@@ -381,23 +496,41 @@
 							</div>
 						</div>
 					</div>
-				</div>		
+									
+				</div><!-- end of search --> 
+			</div>
+			</div><!-- End Container-fluid -->
+		</div><!-- end main page-->			
+
+			
+		<div id="asubAudioPlayerFD" data-spy="affix" class="navbar navbar-fixed-bottom" data-bind="slideVisible: Asub.Player.showAudioPlayer, with: Asub.Player">
+			<div class="navbar-inner">
+				<audio id="asubAudioPlayer" controls="" preload="none" width="100%" height="40" data-bind="attr: {src: currentSource()}"></audio>
 			</div>
 		</div>
+				
+		<!-- /////// hidden Video Player /////-->
+		<div id="asubVideoPlayerFD" class="lightbox hide" >
+				<button class="btn btn-lrg btn-danger closeVideo" data-bind="click: function(){ Asub.Player.showVideoPlayer(false); }">&times;</button>
+			<div class="lightbox-content" data-bind="if: Asub.Player.showVideoPlayer">
+			    <video id="asubVideoPlayer" width="640" height="480" data-bind="attr: {src: Asub.Player.currentSource()}"></video>
+			</div>    
+		</div>
+		<div class="black_overlay" data-bind="visible: Asub.Player.showVideoPlayer"></div>
+		
+		<!-- /////// End of Hidden Video Player /////-->
 
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-        <script src="js/knockout.min.js"></script>
-		<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-        <script src="js/plugins.js"></script>
-        <script src="js/vendor/jwplayer.js"></script>
-        <script src="js/asub.api.js"></script>
-        <script src="js/main.js"></script>
-        <script src="https://jquery-json.googlecode.com/files/jquery.json-2.4.min.js"></script>
-        
-
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+		<script src="http://mediaelementjs.com/js/mejs-2.11.2/mediaelement-and-player.min.js" type="text/javascript"></script>
+		<link href="http://mediaelementjs.com/js/mejs-2.11.2/mediaelementplayer.min.css" rel="Stylesheet" />
+		<link href="http://mediaelementjs.com/js/mejs-2.11.2/mejs-skins.css" rel="Stylesheet" />
+        <script src="js/knockout.min.js" type="text/javascript"></script>
+		<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="js/plugins.js" type="text/javascript"></script>
+        <script src="js/asub.api.js" type="text/javascript"></script>
+        <script src="js/main.js" type="text/javascript"></script>
+                 
+                <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
         <script>
             var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
             (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -405,5 +538,7 @@
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
         -->
+        
+        
     </body>
 </html>
