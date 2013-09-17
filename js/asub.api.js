@@ -1,104 +1,108 @@
-Asub = {
+var Asub = {
 	server: ko.observable()
 };
 
 Asub.API = {
 	baseArgs: function(){
-		return {
-			f:'jsonp',
-			c:'asubnonymous',
-			u:Asub.Login.username(),
-			p:Asub.Login.password(),
-			v:'1.8.0'
-		};	
+		var ajaxArgs = {
+			type: 'GET',
+			dataType: 'jsonp', 
+			crossDomain: true, 
+			data: {
+				f: 'jsonp',
+				c: 'asubnonymous',
+				u: Asub.Login.username(),
+				p: Asub.Login.password(),
+				v: '1.8.0'
+			},
+			error: function(jqXHR,serverMsg,e){
+				toastr.error(serverMsg,'Error');
+			}
+		};
+		
+		return ajaxArgs;
 	},
-	getFolders: function(callback){
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/getMusicFolders.view",
-			data: Asub.API.baseArgs(),
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get folders');
-        	}
-		});
+	ajaxCall: function(ajaxArgs){
+		$.ajax(ajaxArgs);
 	},
-	getIndex: function(id,callback){
-		var data = Asub.API.baseArgs();
-		data.musicFolderId = id;
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/getIndexes.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Index');
-        	}
-		});		
-	},
-	getMusicDirectory: function(id,callback){
-		var data = Asub.API.baseArgs();
-		data.id = id;
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/getMusicDirectory.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Folder Contents');
-        	}
-		});
-	},	
-	ping: function(callback){
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/ping.view",
-			data: Asub.API.baseArgs(),
-	        dataType: "jsonp",
-	        async: false,
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else return callback(false);
-        	}       
-		});
-	},
-	download: function(args){
-		var data = $.extend(Asub.API.baseArgs(), args);
-
-		var Content = Asub.server() + '/rest/download.view?'+Asub.API.serialize(data);
-		return Content;
-	},	
-	stream: function(args){
-		var data = $.extend(Asub.API.baseArgs(), args);
-
-		var Content = Asub.server() + '/rest/stream.view?'+Asub.API.serialize(data);
-		return Content;
-	},
-	hls: function(args){
-		var data = $.extend(Asub.API.baseArgs(), args);
-
-		var Content = Asub.server() + '/rest/hls.m3u8?'+Asub.API.serialize(data);
-		return Content;
-	},
+	/**
+	 * Asub.API.serialize simple recursive function to take a list of args and serialize them into a URL encoded list format
+	 * 
+ 	 * @param {Object} obj to serialize
+ 	 * @param {Object} prefix since this can handle multidemensional arrays this is required
+	 */
 	serialize: function(obj, prefix) {
 	    var str = [];
 	    for(var p in obj) {
 	        var k = prefix ? prefix + "[" + p + "]" : p, v = obj[p];
 	        str.push(typeof v == "object" ? 
-	            serialize(v, k) :
+	            Asub.API.serialize(v, k) :
 	            encodeURIComponent(k) + "=" + encodeURIComponent(v));
 	    }
 	    return str.join("&");
+	},	
+	getFolders: function(callback){
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getMusicFolders.view";
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to get folders');
+	    };
+		Asub.API.ajaxCall(ajaxArgs);
+
+	},
+	getIndex: function(id,callback){
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getIndexes.view";
+		ajaxArgs.data.musicFolderId = id;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to get Index');
+    	};
+		Asub.API.ajaxCall(ajaxArgs);		
+		
+	},
+	getMusicDirectory: function(id,callback){
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getMusicDirectory.view";
+		ajaxArgs.data.id = id;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to get Folder Contents');
+    	};
+		Asub.API.ajaxCall(ajaxArgs);		
+
+	},	
+	ping: function(callback){
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/ping.view";
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else return callback(false);
+    	};
+		Asub.API.ajaxCall(ajaxArgs);		
+
+	},
+	download: function(args){
+		var data = $.extend(Asub.API.baseArgs().data, args);
+
+		var Content = Asub.server() + '/rest/download.view?'+Asub.API.serialize(data);
+		return Content;
+	},	
+	stream: function(args){
+		var data = $.extend(Asub.API.baseArgs().data, args);
+
+		var Content = Asub.server() + '/rest/stream.view?'+Asub.API.serialize(data);
+		return Content;
+	},
+	hls: function(args){
+		var data = $.extend(Asub.API.baseArgs().data, args);
+
+		var Content = Asub.server() + '/rest/hls.m3u8?'+Asub.API.serialize(data);
+		return Content;
 	},
 	getCoverArt: function(args){
-		var data = Asub.API.baseArgs();
+		var data = Asub.API.baseArgs().data;
 		if(args.coverArt){
 			data.id = args.coverArt;
 		}else if(args.id){
@@ -111,102 +115,109 @@ Asub.API = {
 		return Asub.server() + "/rest/getCoverArt.view?" + Asub.API.serialize(data);	
 	},
 	getAlbumList: function(args,callback){
-		var data = Asub.API.baseArgs();
-		if(args.listType) data.type = args.listType;
-		if(args.size) data.size = args.size;
-		if(args.offset) data.offset = args.offset;
-		
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/getAlbumList.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Folder Contents');
-        	}
-		});
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getAlbumList.view";
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to get Folder Contents');
+    	};
+		if(args.listType) 	ajaxArgs.data.type = args.listType;
+		if(args.size)		ajaxArgs.data.size = args.size;
+		if(args.offset) 	ajaxArgs.data.offset = args.offset;
+		Asub.API.ajaxCall(ajaxArgs);
 	},
 	search: function(args,callback){
-		var data = Asub.API.baseArgs();
-		if(args.artist) data.artist = args.artist;
-		if(args.album) data.artistOffset = args.artistOffset;
-		if(args.albumOffset) data.album = args.album;
-		if(args.title) data.title = args.title;
-		if(args.any) data.any = args.any;
-		if(args.count) data.count = args.count;
-		if(args.offset) data.offset = args.offset;
-		if(args.newerThan) data.newerThan = args.newerThan;
-				
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/search.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Folder Contents');
-        	}
-		});
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/search.view";
+		if(args.artist) 		ajaxArgs.data.artist = args.artist;
+		if(args.album) 			ajaxArgs.data.artistOffset = args.artistOffset;
+		if(args.albumOffset) 	ajaxArgs.data.album = args.album;
+		if(args.title) 			ajaxArgs.data.title = args.title;
+		if(args.any) 			ajaxArgs.data.any = args.any;
+		if(args.count) 			ajaxArgs.data.count = args.count;
+		if(args.offset) 		ajaxArgs.data.offset = args.offset;
+		if(args.newerThan) 		ajaxArgs.data.newerThan = args.newerThan;
+
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to search');
+    	};
+    	Asub.API.ajaxCall(ajaxArgs);
 	},	
 	search2: function(args,callback){
-		var data = Asub.API.baseArgs();
-		if(args.query) data.query = args.query;
-		if(args.artistOffset) data.artistOffset = args.artistOffset;
-		if(args.albumOffset) data.albumOffset = args.albumOffset;
-		if(args.songOffset) data.songOffset = args.songOffset;
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/search2.view";
+		if(args.query) 			ajaxArgs.data.query = args.query;
+		if(args.artistOffset) 	ajaxArgs.data.artistOffset = args.artistOffset;
+		if(args.albumOffset) 	ajaxArgs.data.albumOffset = args.albumOffset;
+		if(args.songOffset) 	ajaxArgs.data.songOffset = args.songOffset;
 		//Count
-		if(args.artistCount) data.artistCount = args.artistCount;
-		if(args.albumCount) data.albumCount = args.albumCount;
-		if(args.songCount) data.songCount = args.songCount;
-				
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/search2.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Folder Contents');
-        	}
-		});
+		if(args.artistCount) 	ajaxArgs.data.artistCount = args.artistCount;
+		if(args.albumCount) 	ajaxArgs.data.albumCount = args.albumCount;
+		if(args.songCount) 		ajaxArgs.data.songCount = args.songCount;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to search');
+    	};		
+		Asub.API.ajaxCall(ajaxArgs);
 	},	
 	getChatMessages: function(args,callback){
-		var data = Asub.API.baseArgs();
-		if(args.since) data.since = args.since;
-		
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/getChatMessages.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']){
-	        		return callback(r['subsonic-response']);
-        		}else{
-        			Asub.error('Failed to get Folder Contents');
-    			}
-        	}
-		});
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getChatMessages.view";
+		ajaxArgs.data.since = args.since;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to get messages');
+    	};
+    	Asub.API.ajaxCall(ajaxArgs);	
 	},
 	addChatMessage: function(args,callback){
-		var data = Asub.API.baseArgs();
-		data.message = args.message;
-		
-		$.ajax({
-			type: "GET",
-			url: Asub.server() + "/rest/addChatMessage.view",
-			data: data,
-	        dataType: "jsonp",
-	        crossDomain: true,
-	        success: function(r){
-	        	if(r['subsonic-response']) return callback(r['subsonic-response']);
-	        	else Asub.error('Failed to get Folder Contents');
-        	}
-		});
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/addChatMessage.view";
+		ajaxArgs.data.message = args.message;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to send message');
+    	};
+    	Asub.API.ajaxCall(ajaxArgs);	
 	},
+	getAvatar: function(args){
+		var avatarURL = 'img/noAvatar.png';
+		var data = Asub.API.baseArgs().data;
+		if(args.username){
+			data.username = args.username;
+			var userAvatarURL  = Asub.server() + "/rest/getAvatar.view?" + Asub.API.serialize(data);
+			if(userAvatarURL != '') avatarURL = userAvatarURL;
+		}
+		return avatarURL;
+	},
+	getBreadCrumb: function(id){
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getMusicDirectory.view";
+		ajaxArgs.data.id = id;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response'] && 'ok' == r['subsonic-response']['status'] ){
+        		var d = r['subsonic-response']['directory'];
+				Asub.Navigate.breadCrumb.unshift({id:d.id,name:d.name});
+				//if I've got a parent go recursive
+				if(d.parent){
+					Asub.API.getBreadCrumb(d.parent);
+				}
+        	}
+        	else{
+	        	Asub.error('Error building Breadcrums');
+        	}
+    	};
+    	Asub.API.ajaxCall(ajaxArgs);
+	},
+	getMedia: function( id, callback ){
+		var ajaxArgs = Asub.API.baseArgs();
+		ajaxArgs.url = Asub.server() + "/rest/getSong.view";
+		ajaxArgs.data.id = id;
+		ajaxArgs.success = function(r){
+        	if(r['subsonic-response']) return callback(r['subsonic-response']);
+        	else Asub.error('Failed to send message');
+    	};
+    	Asub.API.ajaxCall(ajaxArgs);		
+	}
 };
