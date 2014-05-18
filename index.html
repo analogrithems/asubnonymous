@@ -22,7 +22,7 @@
 
 		<div id="sidebarMediaList" class="ui red vertical demo sidebar menu">
 			<div data-bind="with: Asub.Content">
-				<div class="item">
+				<div class="rightBtn item">
 					<span data-bind="click: toggleMediaList">
 						<i class="large delete icon"></i>
 					</span>
@@ -40,10 +40,16 @@
 						<i class="search icon"></i>
 					</div>
 					<!-- /ko -->
-				</div>						
+				</div>
+				<div class="item" data-bind="foreach: indexFilter">
+					<a class="pointNClick" data-bind="html: name, click: function(){$('#sidebarMediaList').animate({scrollTop: $('#'+an).offset().top}, 1000);}"></a>
+				</div>
 				<div class="item" data-bind="foreach: indexFilter">
 					<div class="ui red inverted segment">
-						<a data-bind="html: name, attr: {name: name }"></a>
+						<a data-bind="html: name, attr: {id: an }"></a>
+						<div class="rightBtn ui icon pointNClick" data-bind="click: function(){ $('#sidebarMediaList').animate({scrollTop: 0}, 1000);}">
+						  <i class="angle up icon"></i>
+						</div>
 						<table class="ui inverted red table highlight segment">
 							<tbody>
 							<!-- ko foreach: folders -->
@@ -157,9 +163,9 @@
 			<div class="segment"></div>
 			<!-- Main App -->
 			<div id="loggedAppState" style="display: none;" data-bind="with: Asub, visible: Asub.Login.loggedIn()">	
-				<div class="main container">
-					<div class="ui responsive grid">
-						<div class="row">
+				<div class="">
+					<div class="">
+						<div class="">
 							<!-- Front Page -->
 							<div id="frontPage" style="display: none;" class="column" data-bind="visible: Content.showFrontPage, with: Content">
 								<div class="row">					
@@ -173,17 +179,21 @@
 									</div>
 								</div>
 								<div class="clearFix gap"></div>
-								<div class="row" id="mainwrapper">		
-									<div class="column">	
-										<div class="ui small items" data-bind="foreach: frontPageItems">
-											<div class="small item" data-bind="click: function(){ window.location.hash = '#!/Media/' + id; }">
-												<div class="ui black bottom attached label" data-bind="html: title, attr: { href: '#!/Media/' + id }"></div>
-												<div class="">
-													<img data-src="holder.js/300x170" alt="" data-bind="attr: { src: Asub.Content.getFPCoverArt({coverArt: coverArt, size: 150 }) }" />
-												</div>
+								<div class="ui items" id="mainwrapper">
+									<!-- ko foreach: frontPageItems -->
+										<div class="item" data-bind="click: function(){ window.location.hash = '#!/Media/' + id; }">
+											<div class="image">
+												<img data-src="holder.js/300x170" alt="" data-bind="attr: { src: Asub.Content.getFPCoverArt({coverArt: coverArt, size: 300 }) }" />
+											</div>
+											<div class="content">
+												<!-- ko if: year -->
+													<div class="meta" data-bind="text: year"></div>								
+												<!-- /ko -->
+												<div class="name albumTitle" data-bind="html: artist, attr: {title: artist}"></div>
+												<p class="description albumTitle" data-bind="html: title,attr: {title: title}"></p>
 											</div>
 										</div>
-									</div>
+									<!-- /ko -->
 								</div>
 								<div class="clearFix gap"></div>
 								<div class="row">					
@@ -284,10 +294,13 @@
 														<i class="play icon" data-bind="click:  Asub.Player.addCurrent" data-content="Play All" data-position="bottom left" data-variation="black"></i>
 													</div>
 													<div class="ui button">
-														<i class="shuffle icon" data-bind="click: Asub.Player.download" data-content="Shuffle" data-position="bottom left" data-variation="black"></i>
+														<i class="add icon" data-bind="click: Asub.Player.addAll" data-content="Add All" data-position="bottom left" data-variation="black"></i>
 													</div>
 													<div class="ui button">
-														<i class="upload icon" data-bind="click: Asub.Player.download" data-content="Download" data-position="bottom left" data-variation="black"></i>
+														<i class="shuffle icon" data-bind="click: Asub.Player.shuffle" data-content="Shuffle" data-position="bottom left" data-variation="black"></i>
+													</div>
+													<div class="ui button">
+														<i class="download disk icon" data-bind="click: Asub.Player.download" data-content="Download" data-position="bottom left" data-variation="black"></i>
 													</div>
 												</div>
 											</div>

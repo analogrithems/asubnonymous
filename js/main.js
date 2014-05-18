@@ -19,6 +19,7 @@ var SubsonicIndex = function(data){
 	var self = this;
 	self.id = (data.id) ? data.id : '';
 	self.name = data.name;
+	self.an = "anchor_"+data.name;
 	self.folders = ko.observableArray([]);
 	if(data.artist){
 		var Folders =  $.map(data.artist,
@@ -53,7 +54,28 @@ var utils = {
 	},
 	isArray: function (o) {
 		return Object.prototype.toString.call(o) === '[object Array]';
-	}	
+	},
+	shuffle: function(array) {
+	  var currentIndex = array.length
+	    , temporaryValue
+	    , randomIndex
+	    ;
+	
+	  // While there remain elements to shuffle...
+	  while (0 !== currentIndex) {
+	
+	    // Pick a remaining element...
+	    randomIndex = Math.floor(Math.random() * currentIndex);
+	    currentIndex -= 1;
+	
+	    // And swap it with the current element.
+	    temporaryValue = array[currentIndex];
+	    array[currentIndex] = array[randomIndex];
+	    array[randomIndex] = temporaryValue;
+	  }
+	
+	  return array;
+	}
 };
 
 //custom bindng
@@ -380,6 +402,9 @@ Asub.Content = {
 							if(!album.coverArt){
 								album.coverArt = false;
 							}
+							if(!album.year){
+								album.year = false;
+							}
 							return album;
 						}
 				);
@@ -454,7 +479,6 @@ Asub.Content.indexFilter = ko.computed(function(){
 			}
 
 		}
-		console.log(ko.toJS(m));
 		return m;
 	}else{
 		return u;
@@ -524,6 +548,10 @@ Asub.Player = {
 				}
 			});
 			
+		}else if(item.hasOwnProperty('child')  && item.child){
+			for(var i = 0; i < item.child.length; i++){
+				Asub.Player.addToPlayList(item.child[i]);	
+			}
 		}else{
 			item.played = false;
 			Asub.Player.q.push(item);
@@ -538,6 +566,40 @@ Asub.Player = {
 	},
 	addCurrent: function(){
 		Asub.Player.addToPlayListAndPlay(Asub.Content.currentArtist());
+	},
+	addAll: function(){
+		Asub.Player.addToPlayList(Asub.Content.currentArtist());
+	},
+	shuffle: function(){
+		var item = Asub.Content.currentArtist();
+		if(item.hasOwnProperty('isDir')  && item.isDir){
+			//Get Children
+
+			Asub.API.getMusicDirectory(item.id,function(res){
+				if(res.status == 'ok'){
+					if(res.directory){
+						var children = utils.shuffle(res.directory.child);
+						for(var i = 0; i < children.length; i++){
+							Asub.Player.addToPlayList(children[i]);	
+						}
+					}else{
+						Asub.error("Failed to get Folder");
+					}	
+				}else{
+					Asub.error("Failed to get Folder!");
+				}
+			});
+			
+		}else if(item.hasOwnProperty('child')  && item.child){
+			item.child = utils.shuffle(item.child);
+			for(var i = 0; i < item.child.length; i++){
+				Asub.Player.addToPlayList(item.child[i]);	
+			}
+		}else{
+			item.played = false;
+			Asub.Player.q.push(item);
+			Asub.success('<b>'+item.title + '</b> has been added to your current playlist, click now playing to review', 'Playlist Updaated!')
+		} 
 	},
 	removeFromPlaylist: function(item){
 		Asub.Player.q.remove(item);

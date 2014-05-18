@@ -1,4 +1,7 @@
-
+#asubnonymousApp .container{
+	width: 70%;
+	margin: 0px auto;
+}
 .main.menu .container {
 	width: 70%;
 	margin: 0px auto;
@@ -80,6 +83,13 @@ tr:hover td .hover{
 	height:30px;
 }
 
+.albumTitle{
+	width: 245px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 #video-container {
 	position: relative;
 	max-width:640px;
@@ -122,14 +132,18 @@ tr:hover td .hover{
 	width: 915px;
 	margin: 0px auto;
 }
-
+.pointNClick{
+	cursor: pointer;
+}
 #playListQueue .item{
 	padding: .5em 1em!important;
-	width: 200px;
+	width: 300px;
 }
 
 #playListQueue .item .menuItem.title{
   width: 150px;
+}
+#playListQueue .item{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,6 +153,10 @@ tr:hover td .hover{
 }
 #frontPage{
 	padding: 15px 0 30px 0;
+}
+.rightBtn{
+	float: right;
+	
 }
 #rightMenu {
 	//clear: both;
