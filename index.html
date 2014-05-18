@@ -9,15 +9,57 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 		<link rel="stylesheet" type="text/css" class="ui" href="css/semantic.min.css">
-        <link rel="stylesheet" href="css/custom.css"> 
+        <link rel="stylesheet" type="text/css" class="ui" href="css/custom.css">
 
         		
     </head>
     <body id="asubnonymousApp" class="header">
-
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
+        
+
+		<div id="sidebarMediaList" class="ui red vertical demo sidebar menu">
+			<div data-bind="with: Asub.Content">
+				<div class="item">
+					<span data-bind="click: toggleMediaList">
+						<i class="large delete icon"></i>
+					</span>
+				</div>
+				<div class="item">
+					<input type="text" placeholder="Search..." data-bind="value: Asub.Content.listFilter">
+					<!-- ko if: Asub.Content.listFilter --> 
+					<div class="ui icon button" data-bind="click: function(){ Asub.Content.listFilter(''); }">
+						<i class="delete icon"></i>
+					</div>
+					<!-- /ko -->
+					
+					<!-- ko ifnot: Asub.Content.listFilter --> 
+					<div class="ui icon button">
+						<i class="search icon"></i>
+					</div>
+					<!-- /ko -->
+				</div>						
+				<div class="item" data-bind="foreach: indexFilter">
+					<div class="ui red inverted segment">
+						<a data-bind="html: name, attr: {name: name }"></a>
+						<table class="ui inverted red table highlight segment">
+							<tbody>
+							<!-- ko foreach: folders -->
+								<tr>
+									<td>
+										<a class="link" data-bind="click: function(){ window.location.hash = '#!/Media/' + id(); }">
+											<span data-bind="html: name"></span>
+										</a>
+									</td>
+								</tr>
+							<!-- /ko -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<!-- Login page   -->
 		<div  style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
@@ -64,12 +106,11 @@
 		<!-- End Login Page -->
 
         <!--/////////////// menu bar ;) ////////////-->
-        <div class="ui fixed transparent inverted main menu" data-bind="with: Asub, visible: Asub.Login.loggedIn">
+        <div id="headerNav" class="ui fixed transparent inverted main menu" data-bind="with: Asub, visible: Asub.Login.loggedIn">
             <div class="container">
                 <div class="title item">
-					<a href="#/FrontPage/newest"> <i class="home icon"></i> Asub</a>
+					<a href="#!/FrontPage/newest"> <i class="home icon"></i> Asub</a>
 				</div>
-				
 				<div class="section ui dropdown link item">
 					<div class="text">Folders</div>
 					<i class="dropdown icon"></i>
@@ -82,25 +123,25 @@
 					<div class="text">All Media</div>
 					<i class="dropdown icon"></i>
 					<div class="menu">
-	                  	<a class="item" href='#'>
+	                  	<a class="item" href='#!/FrontPage/newest'>
 							<i class="icon-time"></i> Recently Added
 						</a>	
-						<a class="item" href='#'>
+						<a class="item" href='#!/FrontPage/highest'>
 							<i class="icon-star"></i> Highest Rated
 						</a>
-						<a class="item" href='#'>
+						<a class="item" href='#!/FrontPage/frequent'>
 							<i class="icon-repeat"></i> Frequently Played
 						</a>
-						<a class="item" href='#'>
+						<a class="item" href='#!/FrontPage/recent'>
 							<i class="icon-fire"></i> Recently Played
 						</a>
-						<a class="item" href='#'>
+						<a class="item" href='#!/FrontPage/random'>
 							<i class="icon-random"></i> Random
 						</a>
-						<a class="item" href='#'>
+						<a class="item" href='#!/FrontPage/alphabeticalByArtist'>
 							Sort By Artist
 						</a>
-						<a class="item" href='#'>
+						<a class="item" href='#!/FrontPage/alphabeticalByName'>
 							Sort By Album
 						</a>
 						<a class="item" href="#">
@@ -111,16 +152,55 @@
 						</a>
 					</div>
 			    </div>
-				
-                <div class="right menu" style=" display: inline-block; ">
-				    <div class="vertically fitted borderless item">
+			    
+			    <div id="mobileMenu" class="ui dropdown item" >
+			    	<i class="icon list layout"></i>
+			    	<div class="menu">
+					    <div class="vertically fitted borderless item">
+					      <div class="ui icon input">
+					        <input type="text" placeholder="Search..." data-bind="value: Asub.Search.query">
+					      </div>
+					    </div>
+	                	<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
+		                <div class="ui dropdown item">
+							<i class="ordered list icon"></i>
+							<div id="playList" class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
+								<div class="item">
+		                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left small play icon" style="margin-left: 1%;"></i></a>
+		                            <a class="menuItem title" data-bind="html: title,click: Asub.Player.play"></a>
+		                            <a class="menuItem" data-bind="click: Asub.Player.remove"><i class="right small delete icon"></i></a>
+								</div>
+							</div>
+					    </div>
+	                    <a class="popup icon item" title="Toggle Definition" href="#" data-bind="visible: Asub.Player.showAudioPlayer() != true, click: function(){ Asub.Player.showVideoPlayer(true); }">
+	                    	<i class="play icon"></i>
+	                    </a>
+						<div id="audio-container" class="item" style="display: none;" data-bind="visible: Asub.Player.showAudioPlayer">
+							<audio id="asubAudioPlayer" controls="" preload="none" width="300" height="30">
+								Your browser does not support the audio element.
+							</audio>
+						</div>
+	                	<!-- /ko  -->	
+						<a class="popup icon item"  href="#/Chat">
+							<i class="chat icon">
+							<!-- ko if: Asub.Chat.unseen() > 0 -->
+							<b class="ui right red corner label" data-bind="text: Asub.Chat.unseen"></b>
+							<!-- /ko -->
+							</i>
+	                    </a>
+	                    <a class="popup icon item" href="#!/logout" data-bind="click: Login.logout"><i class="blue off icon"></i></a>
+			    	</div>
+			    </div>
+			    
+                <div id="rightMenu" class="menu">
+				    <div class="item">
 				      <div class="ui icon input">
 				        <input type="text" placeholder="Search..." data-bind="value: Asub.Search.query">
 				      </div>
 				    </div>
                 	<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
 	                <div class="ui dropdown item">
-						<i class="list layout icon"></i>
+						<i class="ordered list icon"></i>
 						<div id="playList" class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
 							<div class="item">
 	                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left small play icon" style="margin-left: 1%;"></i></a>
@@ -129,7 +209,7 @@
 							</div>
 						</div>
 				    </div>
-                    <a class="popup icon item" title="Toggle Definition" href="#" data-bind="visible: Asub.Player.showAudioPlayer() != true, click: function(){ Asub.Player.showVideoPlayer(true); }">
+                    <a class="icon item" title="Toggle Definition" href="#" data-bind="visible: Asub.Player.showAudioPlayer() != true, click: function(){ Asub.Player.showVideoPlayer(true); }">
                     	<i class="play icon"></i>
                     </a>
 					<div id="audio-container" class="popup item" style="display: none;" data-bind="visible: Asub.Player.showAudioPlayer">
@@ -138,17 +218,17 @@
 						</audio>
 					</div>
                 	<!-- /ko  -->	
-					<a class="popup icon item"  href="#/Chat">
+					<a class="icon item"  href="#/Chat">
 						<i class="chat icon">
 						<!-- ko if: Asub.Chat.unseen() > 0 -->
 						<b class="ui right red corner label" data-bind="text: Asub.Chat.unseen"></b>
 						<!-- /ko -->
 						</i>
                     </a>
-                    <a class="popup icon item" href="#!/logout" data-bind="click: Login.logout"><i class="blue off icon"></i></a>
+                    <a class="icon item" href="#!/logout" data-bind="click: Login.logout">
+                    	<i class="blue off icon"></i>
+                    </a>
                 </div>
-                
-                
             </div>
         </div>
         <!--/////////////// End Menu Bar ////////////-->
@@ -161,7 +241,7 @@
 				<div class="ui responsive grid">
 					<div class="row">
 						<!-- Front Page -->
-						<div style="display: none;" class="column" data-bind="visible: Content.showFrontPage, with: Content">
+						<div id="frontPage" style="display: none;" class="column" data-bind="visible: Content.showFrontPage, with: Content">
 							<div class="row">					
 								<div class="column">
 									<div class="ui floated left attached button"  data-bind="click: Asub.Content.pfPrevious, css: { disabled: fpOffset() < 1 }">
@@ -260,45 +340,8 @@
 					
 					<!-- // generic content list // -->
 					<div id="mediaList" style="display: none" class="ui grid" data-bind="visible: Navigate.show">
-						<div class="four wide column" data-bind="if: Navigate.showRoot">
-							<div>
-								<div class="scrollbox" data-bind="with: Asub.Content">
-									<div class="ui action input">
-										<input type="text" placeholder="Search..." data-bind="value: Asub.Content.listFilter">
-										<!-- ko if: Asub.Content.listFilter --> 
-										<div class="ui icon button" data-bind="click: function(){ Asub.Content.listFilter(''); }">
-											<i class="delete icon"></i>
-										</div>
-										<!-- /ko -->
-										
-										<!-- ko ifnot: Asub.Content.listFilter --> 
-										<div class="ui icon button">
-											<i class="search icon"></i>
-										</div>
-										<!-- /ko -->
-									</div>						
-									<div class="ui" data-bind="foreach: indexFilter">
-										<div class="ui red inverted segment">
-											<a data-bind="html: name, attr: {name: name }"></a>
-											<table class="ui inverted red table highlight segment">
-												<tbody>
-												<!-- ko foreach: folders -->
-													<tr>
-														<td>
-															<a class="link" data-bind="click: function(){ window.location.hash = '#!/Media/' + id(); }">
-																<span data-bind="html: name"></span>
-															</a>
-														</td>
-													</tr>
-												<!-- /ko -->
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="twelve wide column" data-bind="if: Navigate.showMedia">
+						<div class="sixteen wide column" data-bind="if: Navigate.showMedia">
+							<button class="small ui green button" data-bind="click: Asub.Content.toggleMediaList"><i class="double angle left icon"></i></button>
 							<div class="ui breadcrumb segment"  data-bind="foreach: Navigate.breadCrumb">
 								<!-- ko if: ($index() != (Asub.Navigate.breadCrumb().length - 1)) -->
 								<a href="#" class="section" data-bind="html: name, attr: { href: '#!/Media/' + id }"></a>

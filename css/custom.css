@@ -15,6 +15,7 @@
 .clearFix{
 	clear: both;
 }
+
 .gap{
 	padding: 10px 0;
 }
@@ -96,7 +97,7 @@ tr:hover td .hover{
 	min-width: 320px;
 }
 
-#asubnonymousApp .main.menu {
+#headerNav{
 	min-width: 320px;
 	z-index: 900;
 	-webkit-box-sizing: border-box;
@@ -139,4 +140,48 @@ tr:hover td .hover{
 #playList .item a i.right{
 	float: right;
 }
+#frontPage{
+	padding: 15px 0 30px 0;
+}
+#rightMenu {
+	display: -webkit-inline-box;
+}
+@media only screen and (max-width: 880px) {
+	#headerNav .container {
+		width: 100%;
+		margin: 0px auto;
+	}
+	
+	#headerNav #rightMenu{
+		display: none;
+	}
+
+	#headerNav .container #mobileMenu {
+		display: inline-block;
+	}
+
+}
+
+@media only screen and (min-width: 881px) {	
+
+	#headerNav .container #mobileMenu {
+		display: none;
+	}
+}
+@media only screen and (max-width: 1250px) {
+	#headerNav .container {
+		width: 100%;
+		margin: 0px auto;
+	}
+
+}
+
+@media only screen and (min-width: 1251px) {
+	#headerNav .container {
+		width: 65%;
+		margin: 0px auto;
+	}
+
+}
+
 

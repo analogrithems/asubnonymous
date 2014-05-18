@@ -164,7 +164,7 @@ Asub.init = function(){
 			Asub.Chat.init();
 			Asub.Player.init();
 		}
-		Path.root("#/FrontPage/newest");
+		Path.root("#!/FrontPage/newest");
 		Path.listen();	
 	}else{
 		$.jStorage.flush();
@@ -203,7 +203,7 @@ Asub.Login = {
 					Asub.Login.rememberMe();
 					$.jStorage.flush();
 				}
-				window.location.hash = '#/FrontPage/newest';
+				window.location.hash = '#!/FrontPage/newest';
 				return;
 			}else{
 				Asub.Login.error("Login Failed");
@@ -241,6 +241,14 @@ Asub.Content = {
 	setRootFolder: function(rootFolder){
 		Asub.Content.rFolder(rootFolder.id());
 		window.location.href ='#/rf';
+	},
+	toggleMediaList: function(){
+		$('#sidebarMediaList').sidebar({
+		    overlay: true
+		  })
+		  .sidebar('toggle')
+		;
+		
 	},
 	getRootFolders: function(){
 		Asub.API.getFolders(function(res){
@@ -947,7 +955,7 @@ Path.map("#/Playlist").to(function(){
 	utils.hideall();
 	Asub.Player.showPlaylist(true);
 });
-Path.map("#/FrontPage(/:listType)").to(function(){
+Path.map("#!/FrontPage(/:listType)").to(function(){
 	utils.hideall();
 	Asub.Content.showFrontPage(true);
 	Asub.Content.pflistType(this.params['listType']);
@@ -961,11 +969,12 @@ Path.map("#/Search/:q").to(function(){
 });
 
 Path.map("#!/f/:id").to(function(){
-	utils.hideall();
+	//utils.hideall();
 	Asub.Content.rFolder(this.params['id']);
 	Asub.Content.getIndex();
-	Asub.Navigate.showRoot(true);
-	Asub.Navigate.show(true);
+	Asub.Content.toggleMediaList();
+	//Asub.Navigate.showRoot(true);
+	//Asub.Navigate.show(true);
 });
 
 Path.map("#!/Media/:id").to(function(){
