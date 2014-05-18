@@ -120,6 +120,23 @@ tr:hover td .hover{
 	margin: 0px auto;
 }
 
+#loginPage.container {
+	width: 915px;
+	margin: 0px auto;
+}
 
+#playList .item{
+	padding: .5em 1em!important;
+	width: 200px;
+}
 
+#playList .item .menuItem.title{
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#playList .item a i.right{
+	float: right;
+}
 

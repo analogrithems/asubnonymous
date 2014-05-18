@@ -386,7 +386,7 @@ Asub.Content = {
 	pfNext: function(){
 		var cnt =  Asub.Content.fpCount();
 		var ofst = Asub.Content.fpOffset();
-		
+		scroll(0,0);
 		if(ofst==0){
 			Asub.Content.fpOffset(cnt);
 		}else if(ofst > 0){
@@ -398,7 +398,7 @@ Asub.Content = {
 	pfPrevious: function(){
 		var cnt =  Asub.Content.fpCount();
 		var ofst = Asub.Content.fpOffset();
-		
+		scroll(0,0);
 		if(ofst==0){
 			Asub.Content.fpOffset(0);
 		}else if(ofst > 0){
@@ -550,22 +550,27 @@ Asub.Player = {
 			Asub.Player.play(s);
 		}		
 	},
-    play: function(){
-            media = Asub.Player.q()[Asub.Player.nowPlaying()];
-            console.log('play');
-            console.log(media);
-            if(media.isVideo) var type = 'video';
-            if(!media.isVideo) var type = 'song';
+    play: function(song){
+		if(song){
+			media = song;
+		}else{
+	        media = Asub.Player.q()[Asub.Player.nowPlaying()];			
+		}
 
-            //Set the artwork
-            Asub.Player.currentArt(Asub.API.getCoverArt({coverArt: media.coverArt, size: 60 }));
-            if(type == 'song'){
-                    Asub.Player.musicInit(media);
-            }else if(type == 'video'){
-                    Asub.Player.videoInit(media);
-            }
-            //finaly Change icon state
-            Asub.Player.playerState('play');
+        console.log('play');
+        console.log(media);
+        if(media.isVideo) var type = 'video';
+        if(!media.isVideo) var type = 'song';
+
+        //Set the artwork
+        Asub.Player.currentArt(Asub.API.getCoverArt({coverArt: media.coverArt, size: 60 }));
+        if(type == 'song'){
+                Asub.Player.musicInit(media);
+        }else if(type == 'video'){
+                Asub.Player.videoInit(media);
+        }
+        //finaly Change icon state
+        Asub.Player.playerState('play');
 
     },
 	remove: function(media){
@@ -925,11 +930,11 @@ Path.map("#/rf").to(function(){
 	}
 });
 
-Path.map("#/login").to(function(){
+Path.map("#!/login").to(function(){
 	utils.hideall();
 	Asub.Login.logout();
 });
-Path.map("#/logout").to(function(){
+Path.map("#!/logout").to(function(){
 	utils.hideall();
 	Asub.Login.logout();
 });

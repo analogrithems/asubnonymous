@@ -23,7 +23,7 @@
 		<div  style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
 			<div class="main container" id="loginPage">
 				<div class="ui responsive grid">
-					<div class="six wide column">
+					<div class="ten wide column">
 						<div class="ui form segment" >
 							<div class="span6 offset3 bsBox loginBox" >
 								<div class="ui blue message">
@@ -121,11 +121,11 @@
                 	<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
 	                <div class="ui dropdown item">
 						<i class="list layout icon"></i>
-						<div class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
+						<div id="playList" class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
 							<div class="item">
-	                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left play icon" style="margin-left: 1%;"></i></a>
-	                            <a class="menuItem" data-bind="html: title,click: Asub.Player.play"></a>
-	                            <a class="menuItem" data-bind="click: Asub.Player.remove"><i class="right circular inverted small delete icon"></i></a>
+	                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left small play icon" style="margin-left: 1%;"></i></a>
+	                            <a class="menuItem title" data-bind="html: title,click: Asub.Player.play"></a>
+	                            <a class="menuItem" data-bind="click: Asub.Player.remove"><i class="right small delete icon"></i></a>
 							</div>
 						</div>
 				    </div>
@@ -145,7 +145,7 @@
 						<!-- /ko -->
 						</i>
                     </a>
-                    <a class="popup icon item" href="#/logout" data-bind="click: Login.logout"><i class="blue off icon"></i></a>
+                    <a class="popup icon item" href="#!/logout" data-bind="click: Login.logout"><i class="blue off icon"></i></a>
                 </div>
                 
                 
