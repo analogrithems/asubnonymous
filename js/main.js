@@ -619,7 +619,7 @@ Asub.Player = {
                     Asub.Player.currentPlayer().pause();
             }
 
-            var player = new MediaElementPlayer('#asubAudioPlayer',{
+            var player = new MediaElementPlayer('.asubAudioPlayer',{
             	type: song.contentType,
 			    // if the <video width> is not specified, this is the default
 			    defaultVideoWidth: 480,
