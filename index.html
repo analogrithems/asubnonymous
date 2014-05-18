@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -7,85 +8,53 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">       
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <link rel="stylesheet" href="css/normalize.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/button.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/divider.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/header.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/icon.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/image.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/input.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/label.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/loader.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/progress.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/segment.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/elements/step.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/collections/breadcrumb.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/collections/form.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/collections/grid.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/collections/menu.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/collections/message.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/collections/table.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/views/comment.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/views/list.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/views/feed.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/views/item.css">		
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/modal.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/dropdown.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/popup.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/reveal.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/rating.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/sidebar.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/shape.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/tab.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/checkbox.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/dimmer.css">
-		<link rel="stylesheet" type="text/css" class="ui" href="css/uncompressed/modules/transition.css">
-
+		<link rel="stylesheet" type="text/css" class="ui" href="css/semantic.min.css">
         <link rel="stylesheet" href="css/custom.css"> 
-        <!-- <link rel="stylesheet" href="css/main.css">  -->
 
         		
     </head>
-    <body id="asubnonymousApp" class="Grid">
+    <body id="asubnonymousApp" class="header">
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
 		<!-- Login page   -->
-		<div class="main container">
-			<div class="ui responsive grid">
-				<div class="six wide column">
-					<div class="ui form segment" id="loginPage" style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
-						<div class="span6 offset3 bsBox loginBox" >
-							<div class="ui blue message">
-								<div class="center aligned header">AsubNonymous</div>
-							</div>
-							<form class="form-3">
-								<div class="ui error message" data-bind="if: error"> 
-									<p data-bind="html: error, visible: error"></p>
-								</div>					
-							 	 <div class="field">
-							        <label for="serURL">Server URL</label>
-							        <input type="text"  id="serverURL" data-bind="value: Asub.server" placeholder="Server URL">
-							    </div>
-							    <div class="field">
-							        <label for="login">Username</label>
-							        <input type="text"  id="login"  data-bind="value: username" placeholder="Username">
-							    </div>
-							    <div class="field">
-							        <label for="password">Password</label>
-							        <input type="password" id="password" data-bind="value: password" placeholder="Password"> 
-							    </div>
-								<div class="inline field">
-									<div class="ui checkbox">
-										<input id="rememberMe" type="checkbox" data-bind="value: rememberMe" id="remember">
-										<label for="rememberMe"></label>
-									</div>
-									<label>Remember me</label>
+		<div  style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
+			<div class="main container" id="loginPage">
+				<div class="ui responsive grid">
+					<div class="six wide column">
+						<div class="ui form segment" >
+							<div class="span6 offset3 bsBox loginBox" >
+								<div class="ui blue message">
+									<div class="center aligned header">AsubNonymous</div>
 								</div>
-								<div class="ui blue submit button" data-bind="click: login">Sign in</div>      
-							</form>
+								<form class="form-3">
+									<div class="ui error message" data-bind="if: error"> 
+										<p data-bind="html: error, visible: error"></p>
+									</div>					
+								 	 <div class="field">
+								        <label for="serverURL">Server URL</label>
+								        <input type="text"  id="serverURL" data-bind="value: Asub.server" placeholder="Server URL">
+								    </div>
+								    <div class="field">
+								        <label for="login">Username</label>
+								        <input type="text"  id="login"  data-bind="value: username" placeholder="Username">
+								    </div>
+								    <div class="field">
+								        <label for="password">Password</label>
+								        <input type="password" id="password" data-bind="value: password" placeholder="Password"> 
+								    </div>
+									<div class="inline field">
+										<div class="ui checkbox">
+											<input id="rememberMe" type="checkbox" data-bind="value: rememberMe">
+											<label for="rememberMe"></label>
+										</div>
+										<label>Remember me</label>
+									</div>
+									<div class="ui blue submit button" data-bind="click: login">Sign in</div>      
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -97,47 +66,11 @@
         <!--/////////////// menu bar ;) ////////////-->
         <div class="ui fixed transparent inverted main menu" data-bind="with: Asub, visible: Asub.Login.loggedIn">
             <div class="container">
-                <!-- <a class="launch item"><i class="icon list layout"></i> Content</a> -->
                 <div class="title item">
 					<a href="#/FrontPage/newest"> <i class="home icon"></i> Asub</a>
 				</div>
-                <div class="right menu">
-				    <div class="borderless item">
-				      <div class="ui icon input">
-				        <input type="text" placeholder="Search..." data-bind="value: Asub.Search.query">
-				      </div>
-				    </div>
-                	<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
-	                <div class="ui dropdown item">
-						<i class="list layout icon"></i>
-						<div class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
-							<div class="item">
-	                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left play icon" style="margin-left: 1%;"></i></a>
-	                            <a class="menuItem" data-bind="html: title,click: Asub.Player.play"></a>
-	                            <a class="menuItem" data-bind="click: Asub.Player.remove"><i class="right circular inverted small delete icon"></i></a>
-							</div>
-						</div>
-				    </div>
-                    <a class="popup icon item" title="Toggle Definition" href="#" data-bind="visible: Asub.Player.showAudioPlayer() != true, click: function(){ Asub.Player.showVideoPlayer(true); }">
-                    	<i class="play icon"></i>
-                    </a>
-					<div id="audio-container" class="popup item" style="display: none;" data-bind="visible: Asub.Player.showAudioPlayer">
-						<audio id="asubAudioPlayer" controls="" preload="none" width="300" height="30">
-							Your browser does not support the audio element.
-						</audio>
-					</div>
-                	<!-- /ko  -->	
-					<a class="popup icon item"  href="#/Chat">
-						<i class="chat icon"></i>
-						<!-- ko if: Asub.Chat.unseen() > 0 -->
-						<div class="ui right red corner label" data-bind="text: Asub.Chat.unseen"></div>
-						<!-- /ko -->
-						</i>
-                    </a>
-                    <a class="popup icon item" href="#/logout" data-bind="click: Login.logout"><i class="blue off icon"></i></a>
-                </div>
-
-				<div class="ui dropdown item">
+				
+				<div class="section ui dropdown link item">
 					<div class="text">Folders</div>
 					<i class="dropdown icon"></i>
 					<div class="menu" data-bind="foreach: Asub.Content.rFolders">
@@ -145,7 +78,7 @@
 					</div>
 				</div>
 
-                <div class="ui dropdown item">
+                <div class="section ui dropdown link item">
 					<div class="text">All Media</div>
 					<i class="dropdown icon"></i>
 					<div class="menu">
@@ -178,6 +111,44 @@
 						</a>
 					</div>
 			    </div>
+				
+                <div class="right menu" style=" display: inline-block; ">
+				    <div class="vertically fitted borderless item">
+				      <div class="ui icon input">
+				        <input type="text" placeholder="Search..." data-bind="value: Asub.Search.query">
+				      </div>
+				    </div>
+                	<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
+	                <div class="ui dropdown item">
+						<i class="list layout icon"></i>
+						<div class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
+							<div class="item">
+	                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left play icon" style="margin-left: 1%;"></i></a>
+	                            <a class="menuItem" data-bind="html: title,click: Asub.Player.play"></a>
+	                            <a class="menuItem" data-bind="click: Asub.Player.remove"><i class="right circular inverted small delete icon"></i></a>
+							</div>
+						</div>
+				    </div>
+                    <a class="popup icon item" title="Toggle Definition" href="#" data-bind="visible: Asub.Player.showAudioPlayer() != true, click: function(){ Asub.Player.showVideoPlayer(true); }">
+                    	<i class="play icon"></i>
+                    </a>
+					<div id="audio-container" class="popup item" style="display: none;" data-bind="visible: Asub.Player.showAudioPlayer">
+						<audio id="asubAudioPlayer" controls="" preload="none" width="300" height="30">
+							Your browser does not support the audio element.
+						</audio>
+					</div>
+                	<!-- /ko  -->	
+					<a class="popup icon item"  href="#/Chat">
+						<i class="chat icon">
+						<!-- ko if: Asub.Chat.unseen() > 0 -->
+						<b class="ui right red corner label" data-bind="text: Asub.Chat.unseen"></b>
+						<!-- /ko -->
+						</i>
+                    </a>
+                    <a class="popup icon item" href="#/logout" data-bind="click: Login.logout"><i class="blue off icon"></i></a>
+                </div>
+                
+                
             </div>
         </div>
         <!--/////////////// End Menu Bar ////////////-->
@@ -186,7 +157,6 @@
 
 		<!-- Main App -->
 		<div id="loggedAppState" style="display: none;" data-bind="with: Asub, visible: Asub.Login.loggedIn()">	
-			
 			<div class="main container">
 				<div class="ui responsive grid">
 					<div class="row">
@@ -289,8 +259,8 @@
 					</div>
 					
 					<!-- // generic content list // -->
-					<div id="mediaList" style="display: none" class="ui celled grid" data-bind="visible: Navigate.show">
-						<div class="sidebar four wide column" data-bind="if: Navigate.showRoot">
+					<div id="mediaList" style="display: none" class="ui grid" data-bind="visible: Navigate.show">
+						<div class="four wide column" data-bind="if: Navigate.showRoot">
 							<div>
 								<div class="scrollbox" data-bind="with: Asub.Content">
 									<div class="ui action input">
@@ -345,7 +315,7 @@
 								<div class="ui celled grid">
 									<div class="four wide column">
 										<div class="row" data-bind="if: currentArtist">
-											<img style=" width: auto;"data-bind="attr: { src: getFPCoverArt({id: currentArtist().id, size: 200 }) }">
+											<img style=" width: auto;" data-bind="attr: { src: getFPCoverArt({id: currentArtist().id, size: 200 }) }">
 											<div class="ui mini blue buttons">
 												<div class="ui button">
 													<i class="play icon" data-bind="click:  Asub.Player.addCurrent" data-content="Play All" data-position="bottom left" data-variation="black"></i>
@@ -366,7 +336,7 @@
 													<!-- ko if: isDir -->
 																
 													<a data-bind="attr: {href: '#!/Media/' + id}">
-														<img style=" width: auto;"data-bind="attr: { src: Asub.Content.getFPCoverArt({id: id, size: 100 }) }">
+														<img style=" width: auto;" data-bind="attr: { src: Asub.Content.getFPCoverArt({id: id, size: 100 }) }">
 															<span data-bind="html: title" class="ellipsisTitle span12"></span>
 													</a>
 													
@@ -399,11 +369,6 @@
 												<tr class="expandRow">											
 													<td>
 														<i class="circular blue plus icon link" data-bind="click: Asub.Player.addToPlayList"></i>
-													<!-- ko if: contentType == 'audio/mpeg' -->
-														<!-- if: track -->
-															<span data-bind="html: track"></span>
-														<!-- /ko -->
-													<!-- /ko -->
 													</td>
 													<td>
 																	
@@ -411,7 +376,7 @@
 															<a href="#" data-bind="html: title, click: Asub.Player.addToPlayListAndPlay"></a>
 															
 															<span class="hover">
-																<span href="#" id="rfDownLoad" class="item" data-bind="click: Asub.Content.download">
+																<span  id="rfDownLoad" class="item" data-bind="click: Asub.Content.download">
 																	<i class="inverted circular blue small upload icon" data-content="Download" data-position="top left" data-variation="black"></i>
 																</span>
 															</span>
@@ -541,7 +506,6 @@
 										
 					</div><!-- end of search --> 
 				</div>
-			</div>
 			</div><!-- End Container-fluid -->
 		</div><!-- end main page-->			
 
@@ -571,18 +535,6 @@
         <script src="js/vendor/plugins.js" type="text/javascript"></script>
         <script src="js/asub.api.js" type="text/javascript"></script>
         <script src="js/main.js" type="text/javascript"></script>
-      
-                 
-                 
-                <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
-        <script>
-            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
-        -->
-        
-  
+
     </body>
 </html>

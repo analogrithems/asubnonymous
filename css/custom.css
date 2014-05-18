@@ -23,9 +23,7 @@
 	overflow: scroll;
 	height: 100%;
 }
-.scrollbox{
-	position: absolute;
-}
+
 .ui.small.items>.row>.item, .ui.small.items>.item {
 	display: block;
 	float: left;
@@ -88,3 +86,40 @@ tr:hover td .hover{
 	padding:0 40px 8px;
 	background:url(lib/shadow.png) 0 352px no-repeat;
 }
+
+
+#asubnonymousApp{
+	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+	margin: 0px;
+	padding: 0px;
+	color: #555555;
+	min-width: 320px;
+}
+
+#asubnonymousApp .main.menu {
+	min-width: 320px;
+	z-index: 900;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-transition: margin 0.3s ease;
+	-moz-transition: margin 0.3s ease;
+	-o-transition: margin 0.3s ease;
+	-ms-transition: margin 0.3s ease;
+	transition: margin 0.3s ease;
+	top: 0;
+}
+
+#asubnonymousApp .container {
+	margin: 0px auto;
+}
+
+#loggedAppState .container {
+	width: 1024px;
+	margin: 0px auto;
+}
+
+
+
+
