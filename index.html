@@ -8,9 +8,9 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="stylesheet" href="css/normalize.css">
-        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/docs.css">
         
 		
     </head>
@@ -62,46 +62,22 @@
 		
 		
 		<!-- Login Folder  perhaps make this a modal -->
-		<div class="row-fluid" id="loginPage" style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
-			<div class="span6 offset3 bsBox loginBox">
-				<h2>AsubNonymous</h2>
-				<div class="form-horizontal">
-					<fieldset>
-						<legend> &nbsp; </legend>
-						<div class="control-group" data-bind="visible: error">
-							<div class="controls"> 
-								<span class="alert alert-error" data-bind="html: error, visible: error"></span>
-							</div>
-						</div>
-						<div class="control-group">
-						    <label class="control-label" for="inputServer">Server URL</label>
-						    <div class="controls">
-						    	<input id="inputServer" type="text" data-bind="value: Asub.server" placeholder="Server" />
-						    	<span class="help-block"> (I.E. http://subsonic.org/demo/)</span>	
-						    </div>
-						</div>
-						<div class="control-group">
-						    <label class="control-label" for="inputUsername">Username</label>
-						    <div class="controls">
-								<input id="inputUsername" type="text" data-bind="value: username" placeholder="Username" />
-							</div>
-						</div>
-						<div class="control-group">
-						    <label class="control-label" for="inputPassword">Password</label>
-						    <div class="controls">
-								<input id="inputPassword" type="password" data-bind="value: password" placeholder="Password" />
-							</div>
-						</div>
-						<div class="control-group">
-						    <div class="controls">					
-								<label class="checkbox">
-									<input type="checkbox" data-bind="value: rememberMe"> Remember me
-								</label>
-								<button class="btn btn-primary" data-bind="click: login">Login</button>
-							</div>
-						</div>
-					</fieldset>
-				</div>
+		<div id="loginPage" style="display: none;" data-bind="with: Asub.Login, visible: Asub.Login.loggedIn() == false">
+			<div class="container">
+				<form class="form-signin" data-bind="submit: login">
+					<h2 class="form-signin-heading">Asubnonymous</h2>
+					<h3 class="form-signin-heading">Please sign in</h3>
+					<!--
+					If You want to select a server uncomment this and remove server url in asub.api.js
+					<input type="text" class="input-block-level" data-bind="value: Asub.server" placeholder="Server(URL) https://subsonic.org/demo/">
+					-->
+					<input type="text" class="input-block-level" data-bind="value: username" placeholder="Username">
+					<input type="password" class="input-block-level" data-bind="value: password" placeholder="Password">
+					<label class="checkbox">
+						<input type="checkbox" data-bind="value: rememberMe"> Remember me
+					</label>
+					<button class="btn btn-large btn-primary" type="submit" data-bind="click: login">Sign in</button>
+				</form>
 			</div>
 		</div>
 
@@ -388,13 +364,13 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')</script>
-        <script src="js/knockout.min.js"></script>
-		<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-        <script src="js/plugins.js"></script>
+        <script src="js/vendor/knockout.min.js"></script>
+		<script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/plugins.js"></script>
         <script src="js/vendor/jwplayer.js"></script>
         <script src="js/asub.api.js"></script>
         <script src="js/main.js"></script>
-        <script src="https://jquery-json.googlecode.com/files/jquery.json-2.4.min.js"></script>
+        <script src="js/vendor/jquery.json-2.4.min.js"></script>
         
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 

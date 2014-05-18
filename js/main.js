@@ -46,7 +46,10 @@ var utils = {
 	      		break;
 	    	}
 	  	}
-	}	
+	},
+	isArray: function (o) {
+	  return Object.prototype.toString.call(o) === '[object Array]';
+	}
 };
 Asub.error = function(msg){
 	alert(msg);//for now keep it simple
@@ -166,11 +169,18 @@ Asub.Content = {
 		Asub.API.getFolders(function(res){
 			if(res.status=='ok'){
 				if(res.musicFolders){
-					var Folders =  $.map(res.musicFolders.musicFolder,
-						function(folder) {
-							return new SubsonicFolder(folder);
-						}
-					);
+					if(utils.isArray(res.musicFolders.musicFolder)){
+						var Folders =  $.map(res.musicFolders.musicFolder,
+							function(folder) {
+								return new SubsonicFolder(folder);
+							}
+						);						
+					}else{
+						//single
+						var Folders = [];
+						Folders.push(new SubsonicFolder(res.musicFolders.musicFolder));
+					}
+
 					Asub.Content.rFolders(Folders);
 					if(!Asub.Content.rFolder()) Asub.Content.rFolder(Asub.Content.rFolders()[0].id());
 				}else{
@@ -555,6 +565,8 @@ Asub.Routes = Sammy(function() {
 		Asub.Search.showSearchResults(true);
 	})
 });
+
+
 
 
 $(document).ready(function(){

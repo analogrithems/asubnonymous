@@ -1,5 +1,5 @@
 Asub = {
-	server: ko.observable()
+	server: ko.observable('https://vault.asynonymous.net/media/')
 };
 
 Asub.API = {
