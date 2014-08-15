@@ -22,24 +22,33 @@
 
 		<div id="sidebarMediaList" class="ui red vertical demo sidebar menu">
 			<div data-bind="with: Asub.Content">
-				<div class="rightBtn item">
-					<span data-bind="click: toggleMediaList">
-						<i class="large delete icon"></i>
-					</span>
+				<div class="active red item">
+					<div class="ui horizontal icon divider">
+						<i class="pointNClick large left arrow icon" data-bind="click: Asub.Content.toggleMediaList"></i>
+					</div>
+				</div>
+				<div class="green ui dropdown item">
+					<div class="center text">Folders</div>
+					<i class="dropdown icon"></i>
+					<div class="menu" data-bind="foreach: Asub.Content.rFolders">
+						<a class="green item" data-bind="html: name, click: Asub.Content.fetchFolders"></a>
+					</div>
 				</div>
 				<div class="item">
-					<input type="text" placeholder="Search..." data-bind="value: Asub.Content.listFilter">
-					<!-- ko if: Asub.Content.listFilter --> 
-					<div class="ui icon button" data-bind="click: function(){ Asub.Content.listFilter(''); }">
-						<i class="delete icon"></i>
+					<div class="ui icon input">
+						<input id="listFilter" type="text" placeholder="Search..." data-bind="value: Asub.Content.listFilter">
+						<!-- ko if: Asub.Content.listFilter --> 
+						<div class="ui icon button" data-bind="click: function(){ Asub.Content.listFilter(''); }">
+							<i class="delete icon"></i>
+						</div>
+						<!-- /ko -->
+						
+						<!-- ko ifnot: Asub.Content.listFilter --> 
+						<div class="ui icon button">
+							<i class="search icon"></i>
+						</div>
+						<!-- /ko -->
 					</div>
-					<!-- /ko -->
-					
-					<!-- ko ifnot: Asub.Content.listFilter --> 
-					<div class="ui icon button">
-						<i class="search icon"></i>
-					</div>
-					<!-- /ko -->
 				</div>
 				<div class="item" data-bind="foreach: indexFilter">
 					<a class="pointNClick" data-bind="html: name, click: function(){$('#sidebarMediaList').animate({scrollTop: $('#'+an).offset().top}, 1000);}"></a>
@@ -55,7 +64,7 @@
 							<!-- ko foreach: folders -->
 								<tr>
 									<td>
-										<a class="link" data-bind="click: function(){ window.location.hash = '#!/Media/' + id(); }">
+										<a class="pointNClick link" data-bind="click: function(){ window.location.hash = '#!/Media/' + id(); }">
 											<span data-bind="html: name"></span>
 										</a>
 									</td>
@@ -70,7 +79,10 @@
 
         <!--/////////////// menu bar ;) ////////////-->
         <div id="headerNav" class="ui fixed transparent inverted main menu" data-bind="with: Asub, visible: Asub.Login.loggedIn">
-            <div class="container" style="display: block;">
+			<div class="left item">
+				<i class="pointNClick large right arrow icon" data-bind="click: Asub.Content.toggleMediaList"></i>
+			</div>
+            <div class="container">
                 <div class="title item">
 					<a href="#!/FrontPage/newest"> <i class="home icon"></i> Asub</a>
 				</div>
@@ -78,7 +90,7 @@
 					<div class="text">Folders</div>
 					<i class="dropdown icon"></i>
 					<div class="menu" data-bind="foreach: Asub.Content.rFolders">
-						<a class="item" data-bind="html: name, attr: { href: '#!/f/'+id() }"></a>
+						<a class="item" data-bind="html: name, click: Asub.Content.fetchFolders"></a>
 					</div>
 				</div>
 
@@ -117,21 +129,26 @@
 			    </div>
 			    
 			    
-                <div id="rightMenu" class="right menu">
+                <div id="rightMenu" class="right menu" style="display: inline-block;">
 				    <div class="item">
-				      <div class="ui icon input">
-				        <input type="text" placeholder="Search..." data-bind="value: Asub.Search.query">
+				      <div id="searchButton" class="ui icon input">
+				      	<i class="search icon inverted" data-html="<form data-bind='submit: function(){ Asub.Search.doSearch(Asub.Search.query()); }'><div class='ui icon input'><input type='text' placeholder='Search...' data-bind='value: Asub.Search.query'></div></form>"></i>
 				      </div>
 				    </div>
-                	<!-- ko if: Asub.Player.q().length > 0 && Asub.Player.showVideoPlayer() == false -->
+                	<!-- ko if: Asub.Player.q().length > 0  -->
 	                <div class="ui dropdown item">
 						<i class="ordered list icon"></i>
-						<div id="playListQueue" class="menu ui transition hidden" data-bind="foreach: Asub.Player.q">
+						<div id="playListQueue" class="menu ui transition hidden">
+							<div class="ui red item">
+								<a class="menuItem"  data-bind="click: function(){Asub.Player.q([]);}">Clear Playlist<i class="right delete icon"></i></a>
+							</div>
+							<!-- ko foreach: Asub.Player.q -->
 							<div class="item">
 	                            <a class="menuItem" data-bind="click: Asub.Player.play"><i class="left small play icon" style="margin-left: 1%;"></i></a>
 	                            <a class="menuItem title" data-bind="html: title,click: Asub.Player.play"></a>
 	                            <a class="menuItem" data-bind="click: Asub.Player.remove"><i class="right small delete icon"></i></a>
 							</div>
+							<!-- /ko -->
 						</div>
 				    </div>
                     <a class="icon item" title="Toggle Definition" href="#" data-bind="visible: Asub.Player.showAudioPlayer() != true, click: function(){ Asub.Player.showVideoPlayer(true); }">
@@ -189,7 +206,10 @@
 												<!-- ko if: year -->
 													<div class="meta" data-bind="text: year"></div>								
 												<!-- /ko -->
+												
+												<!-- ko ifnot: isDir -->
 												<div class="name albumTitle" data-bind="html: artist, attr: {title: artist}"></div>
+												<!-- /ko -->
 												<p class="description albumTitle" data-bind="html: title,attr: {title: title}"></p>
 											</div>
 										</div>
@@ -262,7 +282,7 @@
 							<div class="content">
 								<div class="center">
 									<div id="video-container">
-										<video id="asubVideoPlayer" width="640" height="480" data-bind="attr: {src: Asub.Player.currentSource()}"></video>
+										<video id="asubVideoPlayer" data-bind="attr: {src: Asub.Player.currentSource(), poster: Asub.Player.nowPlayingPoster()}" controls="controls" preload="none"></video>
 									</div>
 								</div>
 							</div>
@@ -304,87 +324,110 @@
 													</div>
 												</div>
 											</div>
-											<!-- ko if: otherAlbums -->
-											<div class="row">
-												<p class="otherAlbumsHeader">Other Albums by this Artist:</p>
-												<div class="row-fluid" data-bind="foreach: currentArtistChildren">
-													<div class="otherAlbum">
+											<!-- ko if: currentArtistChildren -->
+												<!-- ko if: otherAlbums -->
+												<div class="row">
+													<div id="otherAlbums" class="ui items" data-bind="foreach: currentArtistChildren">
 														<!-- ko if: isDir -->
-																	
-														<a data-bind="attr: {href: '#!/Media/' + id}">
-															<img style=" width: auto;" data-bind="attr: { src: Asub.Content.getFPCoverArt({id: id, size: 100 }) }">
-																<span data-bind="html: title" class="ellipsisTitle span12"></span>
-														</a>
-														
+															<a class="item" data-bind="attr: {href: '#!/Media/' + id}">
+																<div class="image">
+																	<img style=" width: auto;" data-bind="attr: { src: Asub.Content.getFPCoverArt({id: id, size: 170 }) }">
+																</div>
+																<div class="content">
+																	<div class="meta" data-bind="visible: year,html: year"></div>
+																	<div class="name ellipsisTitle" data-bind="html: title"></div>
+																</div>
+															</a>
 														<!-- /ko -->
-													</div>									
+													</div>
+												</div>
+												<!-- /ko -->
+											<!-- /ko -->
+										</div>
+										<!-- ko ifnot: currentArtistChildren -->
+											<!-- ko if: otherAlbums -->
+											<div class="twelve wide column">
+												<div id="otherAlbums" class="ui items" data-bind="foreach: currentArtistChildren">
+													<!-- ko if: isDir -->
+														<a class="item" data-bind="attr: {href: '#!/Media/' + id}">
+															<div class="image">
+																<img style=" width: auto;" data-bind="attr: { src: Asub.Content.getFPCoverArt({id: id, size: 170 }) }">
+															</div>
+															<div class="content">
+																<div class="meta" data-bind="visible: year,html: year"></div>
+																<div class="name ellipsisTitle" data-bind="html: title"></div>
+															</div>
+														</a>
+													<!-- /ko -->
 												</div>
 											</div>
 											<!-- /ko -->
-										</div>
-										<div class="twelve wide column">
-											<table class="ui small compact sortable table highlight segment" >
-												<thead class="cf">
-													<tr>
-														<th>
-															&nbsp;
-														</th>
-														<th>
-															Title
-														</th>
-														<th>
-															Rating
-														</th>
-														<th>
-															Time
-														</th>
-													</tr>
-												</thead>
-												<tbody data-bind="foreach: currentArtistChildren">
-													<!-- ko ifnot: isDir -->
-													<tr class="expandRow">											
-														<td>
-															<i class="circular blue plus icon link" data-bind="click: Asub.Player.addToPlayList"></i>
-														</td>
-														<td>
-																		
-															<div class="tracList ">
-																<a href="#" data-bind="html: title, click: Asub.Player.addToPlayListAndPlay"></a>
-																
-																<span class="hover">
-																	<span  id="rfDownLoad" class="item" data-bind="click: Asub.Content.download">
-																		<i class="inverted circular blue small upload icon" data-content="Download" data-position="top left" data-variation="black"></i>
+										<!-- /ko -->
+										<!-- ko if: currentArtistChildren -->
+											<div class="twelve wide column">
+												<table class="ui small compact sortable table highlight segment" >
+													<thead class="cf">
+														<tr>
+															<th>
+																&nbsp;
+															</th>
+															<th>
+																Title
+															</th>
+															<th>
+																Rating
+															</th>
+															<th>
+																Time
+															</th>
+														</tr>
+													</thead>
+													<tbody data-bind="foreach: currentArtistChildren">
+														<!-- ko ifnot: isDir -->
+														<tr class="expandRow">											
+															<td>
+																<i class="circular blue plus icon link" data-bind="click: Asub.Player.addToPlayList"></i>
+															</td>
+															<td>
+																			
+																<div class="tracList ">
+																	<a href="#" data-bind="html: title, click: Asub.Player.addToPlayListAndPlay"></a>
+																	
+																	<span class="hover">
+																		<span  id="rfDownLoad" class="item" data-bind="click: Asub.Content.download">
+																			<i class="inverted circular blue small upload icon" data-content="Download" data-position="top left" data-variation="black"></i>
+																		</span>
 																	</span>
-																</span>
-															</div>
-														</td>
-														<!-- ko if: contentType == 'audio/mpeg' -->
-														
-														<!-- /ko -->
-														
-													
-														<td  class="iconAlign span5">
-															<div class="ui star rating active">
-																<i class="icon"></i>
-																<i class="icon"></i>
-																<i class="icon"></i>
-																<i class="icon"></i>
-																<i class="icon"></i>
-															</div>
-								  						</td>													
-														
-														<td class="span2">
-															<!-- if: duration -->
-																
-																<span data-bind="text: Math.round( (duration/60) * 100 )/100"></span>
-																
+																</div>
+															</td>
+															<!-- ko if: contentType == 'audio/mpeg' -->
+															
 															<!-- /ko -->
-														</td>	
-													</tr>
-												<!-- /ko -->
-												</tbody>
-								 			</table>
-										</div>
+															
+														
+															<td  class="iconAlign span5">
+																<div class="ui star rating active">
+																	<i class="icon"></i>
+																	<i class="icon"></i>
+																	<i class="icon"></i>
+																	<i class="icon"></i>
+																	<i class="icon"></i>
+																</div>
+									  						</td>													
+															
+															<td class="span2">
+																<!-- if: duration -->
+																	
+																	<span data-bind="text: Math.round( (duration/60) * 100 )/100"></span>
+																	
+																<!-- /ko -->
+															</td>	
+														</tr>
+													<!-- /ko -->
+													</tbody>
+									 			</table>
+											</div>
+										<!-- /ko -->
 									</div>
 								</div>
 								
@@ -537,13 +580,6 @@
 								        <label for="password">Password</label>
 								        <input type="password" id="password" data-bind="value: password" placeholder="Password"> 
 								    </div>
-									<div class="inline field">
-										<div class="ui checkbox">
-											<input id="rememberMe" type="checkbox" data-bind="value: rememberMe">
-											<label for="rememberMe"></label>
-										</div>
-										<label>Remember me</label>
-									</div>
 									<div class="ui blue submit button" data-bind="click: login">Sign in</div>      
 								</form>
 							</div>

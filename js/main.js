@@ -22,11 +22,16 @@ var SubsonicIndex = function(data){
 	self.an = "anchor_"+data.name;
 	self.folders = ko.observableArray([]);
 	if(data.artist){
-		var Folders =  $.map(data.artist,
-			function(folder) {
-				return new SubsonicFolder(folder);
-			}
-		);
+		if(utils.isArray(data.artist)){
+			var Folders =  $.map(data.artist,
+				function(folder) {
+					return new SubsonicFolder(folder);
+				}
+			);
+		}else{
+			var Folders = [];
+			Folders.push(new SubsonicFolder(data.artist));
+		}
 		self.folders(Folders);
 	}
 }
@@ -149,7 +154,6 @@ Asub.error = function(msg){
 }
 Asub.success = function(msg){
 	toastr.success(msg);
-	console.log(msg);
 }
 Asub.init = function(){
 	//Anything you need to do to start the app goes here
@@ -200,7 +204,6 @@ Asub.Login = {
 	username: ko.observable(),
 	password: ko.observable(),
 	error: ko.observable(),
-	rememberMe: ko.observable(false),
 
 	login: function(){
 		if(Asub.Login.username() == ''){
@@ -216,15 +219,11 @@ Asub.Login = {
 			if(res.status == 'ok'){
 				Asub.Login.loggedIn(true);
 				Asub.Content.getRootFolders();
-				if(Asub.Login.rememberMe()){
-					$.jStorage.set('Asub.login.username',Asub.Login.username());
-					$.jStorage.set('Asub.login.password',Asub.Login.password());
-					$.jStorage.set('Asub.server',Asub.server());
-					$.jStorage.set('Asub.login.loggedIn',Asub.Login.loggedIn());
-				}else{
-					Asub.Login.rememberMe();
-					$.jStorage.flush();
-				}
+				$.jStorage.set('Asub.login.username',Asub.Login.username());
+				$.jStorage.set('Asub.login.password',Asub.Login.password());
+				$.jStorage.set('Asub.server',Asub.server());
+				$.jStorage.set('Asub.login.loggedIn',Asub.Login.loggedIn());
+
 				window.location.hash = '#!/FrontPage/newest';
 				return;
 			}else{
@@ -233,6 +232,7 @@ Asub.Login = {
 		});
 	},
 	logout: function(){
+		$.jStorage.flush();
 		Asub.Login.loggedIn(false);		
 	}
 
@@ -266,7 +266,10 @@ Asub.Content = {
 	},
 	toggleMediaList: function(){
 		$('#sidebarMediaList').sidebar({
-		    overlay: true
+		    overlay: false,
+		    onShow: function(){
+			    document.getElementById("listFilter").focus();
+		    }
 		  })
 		  .sidebar('toggle')
 		;
@@ -308,6 +311,7 @@ Asub.Content = {
 				}
 			);
 			Asub.Content.indexs(Indexs);
+			console.log("Updating indexs");
 			if(Asub.Content.refreshNext == false){
 				return;
 			}else if(Asub.Content.refreshNext == true){
@@ -318,12 +322,18 @@ Asub.Content = {
 		Asub.API.getIndex(Asub.Content.rFolder(),function(res){
 			if(res.status == 'ok'){
 				if(res.indexes){
-					var Indexs =  $.map(res.indexes.index,
-						function(index) {
-							return new SubsonicIndex(index);
-						}
-					);
+					if(utils.isArray(res.indexes.index)){
+						var Indexs =  $.map(res.indexes.index,
+							function(index) {
+								return new SubsonicIndex(index);
+							}
+						);
+					}else{
+						var Indexs = [];
+						Indexs.push(new SubsonicIndex(res.indexes.index));
+					}
 					Asub.Content.indexs(Indexs);
+					console.log("Updating indexs");
 					$.jStorage.set('Asub.Content.Folder.'+Asub.Content.rFolder(),res.indexes.index);				
 				}else{
 					Asub.error("Failed to get Folder Index");
@@ -377,7 +387,6 @@ Asub.Content = {
 					}else{
 						res.directory.child = [res.directory.child];
 					}
-					console.log(res.directory);
 					Asub.Content.currentArtistChildren(res.directory.child);
 					$.jStorage.set('Asub.Content.Folder.'+id,res.directory);				
 				}else{
@@ -440,6 +449,11 @@ Asub.Content = {
 			Asub.Content.fpOffset(ofst);	
 		}
 		
+	},
+	fetchFolders: function(i){
+	console.log("Get Folder:",i.id());
+		Asub.Content.rFolder(i.id());
+		Asub.Content.toggleMediaList();
 	}
 };
 
@@ -452,30 +466,29 @@ Asub.Content.otherAlbums = ko.computed(function(){
 });
 
 Asub.Content.indexFilter = ko.computed(function(){
-	var u = Asub.Content.indexs(), 
-		s = Asub.Content.listFilter();
+	var u = Asub.Content.indexs().slice(0), 
+		s = Asub.Content.listFilter(),
+		cln = ko.toJS(u);
 	
+
 	if( s != '' ){
-		console.log("String Match");
 		var regex = new RegExp(s, "gim"),
 			m = [];
 		
 		for(var i = 0; i < u.length; i++ ){
 			var matches = false,
 				t = [],
-				f = u[i].folders();
+				f = cln[i].folders;
 			
 			for(var n = 0; n < f.length; n++ ){
-				var _name = String(f[n].name());
-				console.log(_name);
+				var _name = String(f[n].name);
 				if( _name.match(regex) ){
 					matches = true;
 					t.push( f[n] );
 				}
 			}
 			if(matches){
-				u[i].folders( t );
-				m.push(u[i]);
+				m.push(new SubsonicIndex({id: cln[i].id, name: cln[i].name, artist: t}));
 			}
 
 		}
@@ -521,6 +534,8 @@ Asub.Player = {
 	playerState: ko.observable('pause'),
 	q: ko.observableArray([]),
 	maxBitRate: false,
+	_defaultHeigt: '480',
+	_defaultWidth: '720',
 	init: function(){
 		//reload playlist from cache
 		var queue = $.jStorage.get('Asub.Player.q');
@@ -528,6 +543,12 @@ Asub.Player = {
 			if(queue.length > 0){
 				Asub.Player.q(queue);
 			}
+		}
+		
+		if(mobilecheck()){
+			//set hls
+			Asub.Player._defaultHeigt = '320';
+			Asub.Player._defaultWidth = '480';
 		}
 	},
 	addToPlayList: function(item){
@@ -627,8 +648,6 @@ Asub.Player = {
 	        media = Asub.Player.q()[Asub.Player.nowPlaying()];			
 		}
 
-        console.log('play');
-        console.log(media);
         if(media.isVideo) var type = 'video';
         if(!media.isVideo) var type = 'song';
 
@@ -735,34 +754,28 @@ Asub.Player = {
 	videoInit: function(video){
 		Asub.Player.showVideoPlayer(true);
 		var m = {id: video.id};
-		var _defaultHeigt = '480';
-		var _defaultWidth = '720';
         if(video.suffix){
                 m.format = video.suffix;//stream format
         }
         if(Asub.Player.maxBitRate){
                 m.maxBitRate = Asub.Player.maxBitRate;
-        }		
+        }
+        
+        //TODO set video tracks to multiple values to allow the use of pure html5 playback via webm or HTLS
 		if(mobilecheck()){
 			//set hls
 			var _type = 'application/vnd.apple.mpegurl';
-			_defaultHeigt = '320';
-			_defaultWidth = '480';
 			var videoSrc = Asub.API.hls(m);
 		}else{
 			//set flash
-			var _type = 'video/x-flv';
-			m.format = 'flv';
-			m.size = _defaultHeigt + 'X' + _defaultWidth;
+			var _type = 'video/webm';
+			m.format = 'webm';
+			m.size = Asub.Player._defaultWidth + 'X' + Asub.Player._defaultHeigt;
 			var videoSrc = Asub.API.stream(m);
 		}
 		
 		Asub.Player.currentType(_type);
 
-        
-        console.log("Video Path");
-        console.log(videoSrc);
-        console.log('EOF');
         Asub.Player.currentSource(videoSrc);
                     
         if(Asub.Player.currentPlayer()){
@@ -772,9 +785,9 @@ Asub.Player = {
 		var player = $('#asubVideoPlayer').mediaelementplayer({
 			type: Asub.Player.currentType(),
 		    // if the <video width> is not specified, this is the default
-		    defaultVideoWidth: _defaultWidth,
+		    defaultVideoWidth: Asub.Player._defaultWidth,
 		    // if the <video height> is not specified, this is the default
-		    defaultVideoHeight: _defaultHeigt,
+		    defaultVideoHeight: Asub.Player._defaultHeigt,
 	        plugins: ['flash','silverlight'],
 		    //plugin path
 		    pluginPath: 'js/vendor/',
@@ -790,7 +803,7 @@ Asub.Player = {
 		    loop: false,
 		    // enables Flash and Silverlight to resize to content size
 		    enableAutosize: true,
-		    features: ['playpause','progress','current','duration','tracks','volume','fullscreen'],
+		    features: ['playpause','progress','current','duration','volume','fullscreen'],
 		    // Hide controls when playing and mouse is not over the video
 		    alwaysShowControls: false,
 		    iPadUseNativeControls: true,
@@ -801,11 +814,23 @@ Asub.Player = {
 		    pauseOtherPlayers: true,
 		    keyActions: []
 		});
+		
+        player.setSrc( videoSrc );
+        player.load();
+        player.pause();
+        player.play();
+        Asub.Player.currentPlayer(player);
 	}
 	
 };
 
-
+Asub.Player.nowPlayingPoster= ko.computed(function(){
+	if(Asub.Player.q()[Asub.Player.nowPlaying()]){
+		return Asub.Content.getFPCoverArt({id:Asub.Player.q()[Asub.Player.nowPlaying()].parent, size: Asub.Player._defaultWidth});	
+	}else{
+		return '';
+	}
+});
 
 
 Asub.Chat = {
@@ -1030,15 +1055,6 @@ Path.map("#/Search/:q").to(function(){
 
 });
 
-Path.map("#!/f/:id").to(function(){
-	//utils.hideall();
-	Asub.Content.rFolder(this.params['id']);
-	Asub.Content.getIndex();
-	Asub.Content.toggleMediaList();
-	//Asub.Navigate.showRoot(true);
-	//Asub.Navigate.show(true);
-});
-
 Path.map("#!/Media/:id").to(function(){
 	utils.hideall();
 	var path = [];
@@ -1066,11 +1082,16 @@ $(document).ready(function(){
 			}
 		}
 	);
+	
+	$('#searchButton i')
+	  .popup({
+	    on: 'click'
+	  })
+	;
 
 	//var asubPlayer =  jwplayer("asubPlayer");
 	$('#footerBar').hover(
 		function(m_in){
-			console.log('test');
 			$('#playerWindow').slideToggle("slow");
 		},
 		function(m_out){

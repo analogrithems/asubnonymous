@@ -27,7 +27,14 @@
 	overflow: scroll;
 	height: 100%;
 }
-
+#frontPage > .ui.items .item>.image {
+	height: 300px;
+	overflow: hidden;	
+}
+.ui.items .item>.content {
+	height: 60px;
+	overflow: hidden;
+}
 .ui.small.items>.row>.item, .ui.small.items>.item {
 	display: block;
 	float: left;
@@ -79,7 +86,7 @@ tr:hover td .hover{
 	display: none;
 }
 .audio-container {
-	width:360px;
+	width:315px;
 	height:30px;
 }
 
@@ -135,6 +142,10 @@ tr:hover td .hover{
 .pointNClick{
 	cursor: pointer;
 }
+#playListQueue {
+	overflow: scroll;
+	max-height: 500px;
+}
 #playListQueue .item{
 	padding: .5em 1em!important;
 	width: 300px;
@@ -151,6 +162,9 @@ tr:hover td .hover{
 #playListQueue .item a i.right{
 	float: right;
 }
+#playListQueue .ui.red.item{
+	background-color: #D95C5C;
+}
 #frontPage{
 	padding: 15px 0 30px 0;
 }
@@ -158,10 +172,29 @@ tr:hover td .hover{
 	float: right;
 	
 }
-#rightMenu {
-	//clear: both;
-	display: inline-block;
+#otherAlbums .item{
+	max-height: 100px;
+	max-width: 170px;
+	font-size: .75em;
 }
+#otherAlbums.ui.items>.item{
+	display: block;
+	float: left;
+	position: relative;
+	top: 0;
+	min-height: 265px;
+	margin: 0 .5em 2.5em;
+	background-color: #FFF;
+	-webkit-box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+	box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+	border-bottom: .2em solid rgba(0,0,0,.2);
+	border-radius: .33em;
+	-webkit-transition: -webkit-box-shadow .2s ease;
+	-moz-transition: box-shadow .2s ease;
+	transition: box-shadow .2s ease;
+	padding: .2em;
+	}
+
 @media only screen and (max-width: 880px) {
 	#headerNav .container {
 		width: 100%;
