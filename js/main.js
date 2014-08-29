@@ -103,51 +103,6 @@ ko.bindingHandlers.slideVisible = {
     }
 };
 
-
-ko.bindingHandlers.jwPlayer = {
-    init: function(element, valueAccessor, allBindingsAccessor) {
-        var videoUrl = ko.utils.unwrapObservable(valueAccessor());
-        var allBindings = allBindingsAccessor();
-
-        var mysources = [];
-        if (videoUrl[0]) mysources.push({ file: videoUrl[0] });
-        if (videoUrl[1]) mysources.push({ file: videoUrl[1] });
-        if (videoUrl[2]) mysources.push({ file: videoUrl[2] });
-        
-        var options = {
-            playlist: [{
-                image: allBindings.posterUrl(),
-                sources: mysources
-            }],            
-            height: 450,
-            width: 800,          
-        };
-
-        jwplayer(allBindings.playerId).setup(options);
-    },
-
-    update: function(element, valueAccessor, allBindingsAccessor) {
-        var videoUrl = ko.utils.unwrapObservable(valueAccessor());
-        var allBindings = allBindingsAccessor();
-
-        var mysources = [];
-        if (videoUrl[0]) mysources.push({ file: videoUrl[0] });
-        if (videoUrl[1]) mysources.push({ file: videoUrl[1] });
-        if (videoUrl[2]) mysources.push({ file: videoUrl[2] });
-
-        
-        var playlist = [{
-                image: allBindings.posterUrl(),
-                sources: mysources
-            }];
-                   
-        jwplayer(allBindings.playerId).onReady(function() {
-            jwplayer(allBindings.playerId).load(playlist);
-        });
-    }
-};
-
-
 toastr.options.positionClass = 'toast-top-right';
 Asub.error = function(msg){
 	alert(msg);//for now keep it simple
@@ -534,7 +489,7 @@ Asub.Player = {
 	playerState: ko.observable('pause'),
 	q: ko.observableArray([]),
 	maxBitRate: false,
-	_defaultHeigt: '480',
+	_defaultHeight: '480',
 	_defaultWidth: '720',
 	init: function(){
 		//reload playlist from cache
@@ -547,9 +502,18 @@ Asub.Player = {
 		
 		if(mobilecheck()){
 			//set hls
-			Asub.Player._defaultHeigt = '320';
+			Asub.Player._defaultHeight = '320';
 			Asub.Player._defaultWidth = '480';
 		}
+
+		$(document).ready(function(){
+			Asub.Player._defaultHeight = Math.floor(window.innerHeight * 0.7);
+			Asub.Player._defaultWidth = Math.floor(window.innerHeight * 0.7 * (16/9));
+		});
+		$(window).on('resize',function(){
+			Asub.Player._defaultHeight = Math.floor(window.innerHeight * 0.7);
+			Asub.Player._defaultWidth = Math.floor(window.innerHeight * 0.7 * (16/9));
+		});
 	},
 	addToPlayList: function(item){
 
@@ -570,8 +534,15 @@ Asub.Player = {
 			});
 			
 		}else if(item.hasOwnProperty('child')  && item.child){
-			for(var i = 0; i < item.child.length; i++){
-				Asub.Player.addToPlayList(item.child[i]);	
+			if(item.child.length > 0){
+				for(var i = 0; i < item.child.length; i++){
+					Asub.Player.addToPlayList(item.child[i]);	
+				}
+			}else{
+				//single just add one
+				if(!item.child.isDir){
+					Asub.Player.addToPlayList(item.child);					
+				}
 			}
 		}else{
 			item.played = false;
@@ -700,52 +671,32 @@ Asub.Player = {
                     Asub.Player.currentPlayer().pause();
             }
 
-            var player = new MediaElementPlayer('.asubAudioPlayer',{
-            	type: song.contentType,
-			    // if the <video width> is not specified, this is the default
-			    defaultVideoWidth: 480,
-			    // if the <video height> is not specified, this is the default
-			    defaultVideoHeight: 30,
-			    // if set, overrides <video width>
-			    videoWidth: -1,
-			    // if set, overrides <video height>
-			    videoHeight: -1,
-			    // width of audio player
-			    audioWidth: '100%',
-			    // height of audio player
-			    audioHeight: 30,
-			    // initial volume when the player starts
-			    startVolume: 0.8,
-			    // useful for <audio> player loops
-			    loop: false,
-			    // enables Flash and Silverlight to resize to content size
-			    enableAutosize: true,
-			    // the order of controls you want on the control bar (and other plugins below)
-			    features: ['playpause','progress','duration','volume'],
-			    // Hide controls when playing and mouse is not over the video
-			    alwaysShowControls: false,
-			    // force iPad's native controls
-			    iPadUseNativeControls: true,
-			    // force iPhone's native controls
-			    iPhoneUseNativeControls: true, 
-			    // force Android's native controls
-			    AndroidUseNativeControls: true,
-			    // forces the hour marker (##:00:00)
-			    alwaysShowHours: false,
-			    // show framecount in timecode (##:00:00:00)
-			    showTimecodeFrameCount: false,
-			    // used when showTimecodeFrameCount is set to true
-			    framesPerSecond: 25,
-			    // turns keyboard support on and off for this instance
-			    enableKeyboard: true,
-			    // when this player starts, it will pause other players
-			    pauseOtherPlayers: true,
-			    // array of keyboard commands
-			    keyActions: []
-			 
+            var player = new MediaElement('asubAudioPlayer',{
+				// shows debug errors on screen
+			    enablePluginDebug: false,
+			    // remove or reorder to change plugin priority
+			    plugins: ['flash','silverlight'],
+			    // specify to force MediaElement to use a particular video or audio type
+			    type: song.contentType,
+			    // path to Flash and Silverlight plugins
+			    pluginPath: 'js/vendor/',
+			    // name of flash file
+			    flashName: 'flashmediaelement.swf',
+			    // name of silverlight file
+			    silverlightName: 'silverlightmediaelement.xap',
+			    // default if the <video width> is not specified
+			    defaultVideoWidth: Asub.Player._defaultWidth,
+			    // default if the <video height> is not specified     
+			    defaultVideoHeight: Asub.Player._defaultHeight,
+			    // overrides <video width>
+			    pluginWidth: -1,
+			    // overrides <video height>       
+			    pluginHeight: -1,
+			    // rate in milliseconds for Flash and Silverlight to fire the timeupdate event
+			    // larger number is less accurate, but less strain on plugin->JavaScript bridge
+			    timerRate: 250,			 
 			});
-            player.setSrc( songSrc );
-            player.load();
+            //player.load();
             player.pause();
             player.play();
             Asub.Player.currentPlayer(player);
@@ -770,56 +721,58 @@ Asub.Player = {
 			//set flash
 			var _type = 'video/webm';
 			m.format = 'webm';
-			m.size = Asub.Player._defaultWidth + 'X' + Asub.Player._defaultHeigt;
+			m.size = Asub.Player._defaultWidth + 'X' + Asub.Player._defaultHeight;
 			var videoSrc = Asub.API.stream(m);
 		}
 		
 		Asub.Player.currentType(_type);
 
-        Asub.Player.currentSource(videoSrc);
+
                     
-        if(Asub.Player.currentPlayer()){
-                Asub.Player.currentPlayer().pause();
+        if(Asub.Player.currentPlayer() && videoSrc === Asub.Player.currentSource()){
+        	Asub.Player.currentPlayer().play();
+        }else{
+        	Asub.Player.currentSource(videoSrc);
+
+			var player = new MediaElement('asubVideoPlayer',{
+				type: Asub.Player.currentType(),
+			    // if the <video width> is not specified, this is the default
+			    defaultVideoWidth: Asub.Player._defaultWidth,
+			    // if the <video height> is not specified, this is the default
+			    defaultVideoHeight: Asub.Player._defaultHeight,
+				plugins: ['flash','silverlight'],
+			    //plugin path
+			    pluginPath: 'js/vendor/',
+			    //flash player
+				flashName: 'flashmediaelement.swf',
+			    // name of silverlight file
+			    silverlightName: 'silverlightmediaelement.xap',		    
+			    videoWidth: Asub.Player._defaultWidth,
+			    videoHeight: Asub.Player._defaultHeight,
+			    audioWidth: 400,
+			    audioHeight: 30,
+			    startVolume: 0.8,
+			    loop: false,
+			    // enables Flash and Silverlight to resize to content size
+			    //enableAutosize: true,
+			    features: ['playpause','progress','current','duration','volume','fullscreen'],
+			    // Hide controls when playing and mouse is not over the video
+			    alwaysShowControls: false,
+			    iPadUseNativeControls: true,
+			    iPhoneUseNativeControls: true, 
+			    AndroidUseNativeControls: true,
+			    framesPerSecond: 25,
+			    enableKeyboard: true,
+			    pauseOtherPlayers: true,
+			    keyActions: []
+			});
+			
+			player.src = videoSrc;
+	        player.load();
+	        player.pause();
+	        //player.play();
+	        Asub.Player.currentPlayer(player);
         }
-		
-		var player = $('#asubVideoPlayer').mediaelementplayer({
-			type: Asub.Player.currentType(),
-		    // if the <video width> is not specified, this is the default
-		    defaultVideoWidth: Asub.Player._defaultWidth,
-		    // if the <video height> is not specified, this is the default
-		    defaultVideoHeight: Asub.Player._defaultHeigt,
-	        plugins: ['flash','silverlight'],
-		    //plugin path
-		    pluginPath: 'js/vendor/',
-		    //flash player
-			flashName: 'flashmediaelement.swf',
-		    // name of silverlight file
-		    silverlightName: 'silverlightmediaelement.xap',		    
-		    videoWidth: -1,
-		    videoHeight: -1,
-		    audioWidth: 400,
-		    audioHeight: 30,
-		    startVolume: 0.8,
-		    loop: false,
-		    // enables Flash and Silverlight to resize to content size
-		    enableAutosize: true,
-		    features: ['playpause','progress','current','duration','volume','fullscreen'],
-		    // Hide controls when playing and mouse is not over the video
-		    alwaysShowControls: false,
-		    iPadUseNativeControls: true,
-		    iPhoneUseNativeControls: true, 
-		    AndroidUseNativeControls: true,
-		    framesPerSecond: 25,
-		    enableKeyboard: true,
-		    pauseOtherPlayers: true,
-		    keyActions: []
-		});
-		
-        player.setSrc( videoSrc );
-        player.load();
-        player.pause();
-        player.play();
-        Asub.Player.currentPlayer(player);
 	}
 	
 };
@@ -895,6 +848,7 @@ Asub.Chat = {
 				Asub.Chat.getMessages();
 			}			
 		});
+		Asub.Chat.message('');
 	},
 	clearMessages: function(){
 		Asub.Chat.messages([]);
@@ -908,63 +862,12 @@ Asub.Chat = {
 	
 };
 
-/*
-Asub.Player.showPlaylist.subscribe(function(pl){
-	if(Asub.Player.showPlaylist() == true){
-		var pl = [];
-		for(var t = 0; t < Asub.Player.q().length; t++ ){
-			var item = Asub.Player.q()[t];
-			var i = {};
-			if(item.coverArt) i.image = Asub.Content.getFPCoverArt({coverArt: item.coverArt });
-			if(item.title) i.title = item.title;
-			i.sources = [];
-			i.mediaid = item.id;
-			var st = {};
-			var m = {id: item.id};
-			if(item.suffix){
-				st.type = item.suffix;//jwplayer format
-				m.format = item.suffix;//stream format
-			}
-			if(Asub.Player.maxBitRate){
-				m.maxBitRate = Asub.Player.maxBitRate
-			}
-			st.file = Asub.API.stream(m);
-			i.sources.push(st);
-			if(item.isVideo){
-				//hls format also
-				st.file = Asub.API.hls(m);
-				st.type = 'hls';
-				i.sources.push(st);
-				//flv format also
-				m.format = 'flv';
-				st.file = Asub.API.stream(m);
-				st.type = 'flv';
-				i.sources.push(st);					
-			}
-		
-			
-			pl.push(i);
-		}
-		//return pl;
-		console.log($.toJSON(pl));
-		jwplayer("asubPlayer").setup({
-			playlist: pl,
-			height: 360,
-		    listbar: {
-		        position: 'right',
-		        size: 200
-		    },
-		    width: 700			
-		});
-	}else{
-		return false;
-	}	
-});
-*/
+
 Asub.Player.q.subscribe(function(newValue){
 	//on change save to local storage
 	$.jStorage.set('Asub.Player.q',newValue);
-	$('.ui.dropdown').dropdown();
+	
+	setTimeout(function(){$('.ui.dropdown').dropdown();}, 200);
 });
 
 Asub.Content.rFolder.subscribe(function(newValue){
@@ -988,7 +891,14 @@ Asub.Content.pflistType.subscribe(function(newValue){
 
 Asub.Player.showVideoPlayer.subscribe(function(newValue){
 	if( true === newValue ){
-		$('#asubVideo').dimmer('show');
+		$('#asubVideo').dimmer({
+			onHide: function(){
+				if(Asub.Player.currentPlayer()){
+					Asub.Player.currentPlayer().pause();
+				}
+				setTimeout(function(){Asub.Player.showVideoPlayer(false);}, 1000);	
+			}
+		}).dimmer('show');
 	}else{
 		$('#asubVideo').dimmer('hide');
 	}
@@ -1089,7 +999,6 @@ $(document).ready(function(){
 	  })
 	;
 
-	//var asubPlayer =  jwplayer("asubPlayer");
 	$('#footerBar').hover(
 		function(m_in){
 			$('#playerWindow').slideToggle("slow");

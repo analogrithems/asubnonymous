@@ -155,7 +155,7 @@
                     	<i class="play icon"></i>
                     </a>
 					<div class="item audio-container" style="display: none;" data-bind="visible: Asub.Player.showAudioPlayer">
-						<audio class="asubAudioPlayer" controls="" preload="none">
+						<audio id="asubAudioPlayer" class="asubAudioPlayer" controls="" preload="none">
 							Your browser does not support the audio element.
 						</audio>
 					</div>
@@ -282,7 +282,7 @@
 							<div class="content">
 								<div class="center">
 									<div id="video-container">
-										<video id="asubVideoPlayer" data-bind="attr: {src: Asub.Player.currentSource(), poster: Asub.Player.nowPlayingPoster()}" controls="controls" preload="none"></video>
+										<video id="asubVideoPlayer" data-bind="attr: { poster: Asub.Player.nowPlayingPoster(), height: Asub.Player._defaultHeight, width: Asub.Player._defaultWidth}" controls="controls" preload="none"></video>
 									</div>
 								</div>
 							</div>
@@ -311,7 +311,7 @@
 												<img style=" width: auto;" data-bind="attr: { src: getFPCoverArt({id: currentArtist().id, size: 200 }) }">
 												<div class="ui mini blue buttons">
 													<div class="ui button">
-														<i class="play icon" data-bind="click:  Asub.Player.addCurrent" data-content="Play All" data-position="bottom left" data-variation="black"></i>
+														<i class="play icon" data-bind="click: Asub.Player.addCurrent" data-content="Play All" data-position="bottom left" data-variation="black"></i>
 													</div>
 													<div class="ui button">
 														<i class="add icon" data-bind="click: Asub.Player.addAll" data-content="Add All" data-position="bottom left" data-variation="black"></i>
@@ -547,7 +547,7 @@
 	-->		
 			<!-- /////// End of Hidden Video Player /////-->
 	        <script src="js/vendor/jquery-1.8.3.min.js" type="text/javascript"></script>
-			<script src="js/vendor/mediaelement-and-player.min.js" type="text/javascript"></script>
+			<script src="js/vendor/mediaelement-and-player.js" type="text/javascript"></script>
 	        <script src="js/vendor/semantic.min.js" type="text/javascript"></script>
 	        <script src="js/vendor/knockout.min.js" type="text/javascript"></script>
 	        <script src="js/vendor/plugins.js" type="text/javascript"></script>

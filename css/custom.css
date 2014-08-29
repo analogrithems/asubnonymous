@@ -98,11 +98,7 @@ tr:hover td .hover{
 }
 
 #video-container {
-	position: relative;
-	max-width:640px;
-	margin:0 auto 160px;
-	padding:0 40px 8px;
-	background:url(lib/shadow.png) 0 352px no-repeat;
+	display: inline-block;
 }
 
 
