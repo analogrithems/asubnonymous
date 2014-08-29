@@ -28,12 +28,38 @@
 	height: 100%;
 }
 #frontPage > .ui.items .item>.image {
-	height: 300px;
 	overflow: hidden;	
 }
-.ui.items .item>.content {
-	height: 60px;
+.ui.items {
+    text-align: center;
+}
+.ui.items .item {
+    display: inline-block;
+    vertical-align: top;
+    float: none;
+    box-shadow: none;
+    border-bottom: none;
+    min-height: inherit;
+    background-color: none;
+
+    transition: transform 0.2s;
+}
+.ui.items .item:hover {
+	box-shadow: none;
+	transform: scale(1.1);
+}
+.ui.items .item .image {
+	max-height: 300px;
 	overflow: hidden;
+}
+.ui.items .item>.content {
+	overflow: hidden;
+}
+.ui.items .item>.content>.description {
+	clear: none;
+}
+.ui.items .item>.content>.meta {
+	margin-left: 4px;
 }
 .ui.small.items>.row>.item, .ui.small.items>.item {
 	display: block;
@@ -91,7 +117,6 @@ tr:hover td .hover{
 }
 
 .albumTitle{
-	width: 245px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -191,6 +216,16 @@ tr:hover td .hover{
 	padding: .2em;
 	}
 
+@media only screen and (max-width: 970px) {
+	.ui.items .item {
+		min-height: 200px;
+		width: 200px;
+		margin-bottom: 0;
+	}
+	.ui.items .item .image {
+		height: auto;
+	}
+}
 @media only screen and (max-width: 880px) {
 	#headerNav .container {
 		width: 100%;
@@ -204,7 +239,6 @@ tr:hover td .hover{
 	#headerNav .container #mobileMenu {
 		display: inline-block;
 	}
-
 }
 
 @media only screen and (min-width: 881px) {	

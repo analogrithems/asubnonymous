@@ -224,10 +224,13 @@ Asub.Content = {
 		    overlay: false,
 		    onShow: function(){
 			    document.getElementById("listFilter").focus();
+				$('#headerNav .left.item i').removeClass('left right').addClass('left');
+		    },
+		    onHide: function(){
+				$('#headerNav .left.item i').removeClass('left right').addClass('right');
 		    }
 		  })
 		  .sidebar('toggle');
-		
 	},
 	getRootFolders: function(){
 		Asub.API.getFolders(function(res){
@@ -478,7 +481,7 @@ Asub.Search = {
 };
 
 Asub.Search.query.subscribe(function(newData){
-	window.location = '#/Search/' + newData;	
+	window.location.hash = '#/Search/' + newData;	
 });
 
 Asub.Player = {
@@ -504,19 +507,23 @@ Asub.Player = {
 			}
 		}
 		
-		if(mobilecheck()){
-			//set hls
-			Asub.Player._defaultHeight = '320';
-			Asub.Player._defaultWidth = '480';
-		}
-
 		$(document).ready(function(){
-			Asub.Player._defaultHeight = Math.floor(window.innerHeight * 0.7);
-			Asub.Player._defaultWidth = Math.floor(window.innerHeight * 0.7 * (16/9));
+			if(window.innerHeight < window.innerWidth){
+				Asub.Player._defaultHeight = Math.floor(window.innerHeight * 0.7);
+				Asub.Player._defaultWidth = Math.floor(window.innerHeight * 0.7 * (16/9));
+			} else {
+				Asub.Player._defaultHeight = Math.floor(window.innerWidth * 0.7);
+				Asub.Player._defaultWidth = Math.floor(window.innerWidth * 0.7 * (16/9));
+			}
 		});
 		$(window).on('resize',function(){
-			Asub.Player._defaultHeight = Math.floor(window.innerHeight * 0.7);
-			Asub.Player._defaultWidth = Math.floor(window.innerHeight * 0.7 * (16/9));
+			if(window.innerHeight < window.innerWidth){
+				Asub.Player._defaultHeight = Math.floor(window.innerHeight * 0.7);
+				Asub.Player._defaultWidth = Math.floor(window.innerHeight * 0.7 * (16/9));
+			} else {
+				Asub.Player._defaultHeight = Math.floor(window.innerWidth * 0.7);
+				Asub.Player._defaultWidth = Math.floor(window.innerWidth * 0.7 * (16/9));
+			}
 		});
 	},
 	addToPlayList: function(item){
@@ -669,41 +676,64 @@ Asub.Player = {
 
             var songSrc = Asub.API.stream(m);
 
-            Asub.Player.currentSource(songSrc);
-            Asub.Player.currentType(song.contentType);            
-            if(Asub.Player.currentPlayer()){
-                    Asub.Player.currentPlayer().pause();
-            }
 
-            var player = new MediaElement('asubAudioPlayer',{
-				// shows debug errors on screen
-			    enablePluginDebug: false,
-			    // remove or reorder to change plugin priority
-			    plugins: ['flash','silverlight'],
-			    // specify to force MediaElement to use a particular video or audio type
-			    type: song.contentType,
-			    // path to Flash and Silverlight plugins
-			    pluginPath: 'js/vendor/',
-			    // name of flash file
-			    flashName: 'flashmediaelement.swf',
-			    // name of silverlight file
-			    silverlightName: 'silverlightmediaelement.xap',
-			    // default if the <video width> is not specified
-			    defaultVideoWidth: Asub.Player._defaultWidth,
-			    // default if the <video height> is not specified     
-			    defaultVideoHeight: Asub.Player._defaultHeight,
-			    // overrides <video width>
-			    pluginWidth: -1,
-			    // overrides <video height>       
-			    pluginHeight: -1,
-			    // rate in milliseconds for Flash and Silverlight to fire the timeupdate event
-			    // larger number is less accurate, but less strain on plugin->JavaScript bridge
-			    timerRate: 250,			 
-			});
-            //player.load();
-            player.pause();
-            player.play();
-            Asub.Player.currentPlayer(player);
+            Asub.Player.currentType(song.contentType);            
+            if(Asub.Player.currentPlayer() && songSrc === Asub.Player.currentSource()){
+                    Asub.Player.currentPlayer().play();
+            }else{
+	            Asub.Player.currentSource(songSrc);	            
+    
+	
+	            var player = new MediaElement('asubAudioPlayer',{
+	            	type: song.contentType,
+				    // if the <video width> is not specified, this is the default
+				    defaultVideoWidth: 480,
+				    // if the <video height> is not specified, this is the default
+				    defaultVideoHeight: 30,
+				    // if set, overrides <video width>
+				    videoWidth: -1,
+				    // if set, overrides <video height>
+				    videoHeight: -1,
+				    // width of audio player
+				    audioWidth: '100%',
+				    // height of audio player
+				    audioHeight: 30,
+				    // initial volume when the player starts
+				    startVolume: 0.8,
+				    // useful for <audio> player loops
+				    loop: false,
+				    // enables Flash and Silverlight to resize to content size
+				    enableAutosize: true,
+				    // the order of controls you want on the control bar (and other plugins below)
+				    features: ['playpause','progress','duration','volume'],
+				    // Hide controls when playing and mouse is not over the video
+				    alwaysShowControls: false,
+				    // force iPad's native controls
+				    iPadUseNativeControls: true,
+				    // force iPhone's native controls
+				    iPhoneUseNativeControls: true, 
+				    // force Android's native controls
+				    AndroidUseNativeControls: true,
+				    // forces the hour marker (##:00:00)
+				    alwaysShowHours: false,
+				    // show framecount in timecode (##:00:00:00)
+				    showTimecodeFrameCount: false,
+				    // used when showTimecodeFrameCount is set to true
+				    framesPerSecond: 25,
+				    // turns keyboard support on and off for this instance
+				    enableKeyboard: true,
+				    // when this player starts, it will pause other players
+				    pauseOtherPlayers: true,
+				    // array of keyboard commands
+				    keyActions: []
+				 
+				});
+				player.src = songSrc;
+	            //player.load();
+	            player.pause();
+	            player.play();
+	            Asub.Player.currentPlayer(player);
+			}
 
     },
 	videoInit: function(video){
@@ -1019,6 +1049,23 @@ $(document).ready(function(){
 			$('#playerWindow').slideToggle("slow");
 		}
 	);
+	if(settings.hasOwnProperty('server')){
+		Asub.server(settings.server);
+		Asub.showServer(false);
+	}
+	if(settings.hasOwnProperty('username')){
+		Asub.Login.username(settings.username);
+		Asub.showUser(false);
+	}
+	if(settings.hasOwnProperty('password')){
+		Asub.Login.password(settings.password);
+		Asub.showPassword(false);
+	}
+	
+	if(Asub.server() && Asub.Login.username() && Asub.Login.password() ){
+		//if they are all preset just login
+		Asub.Login.login();
+	}
 });
 
 

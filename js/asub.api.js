@@ -1,5 +1,8 @@
 var Asub = {
-	server: ko.observable()
+	server: ko.observable(),
+	showServer: ko.observable(true),
+	showUser: ko.observable(true),
+	showPassword: ko.observable(true),
 };
 
 Asub.API = {

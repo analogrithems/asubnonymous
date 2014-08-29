@@ -12,21 +12,15 @@
 		<link rel="stylesheet" type="text/css" class="ui" href="css/skin/mediaelementplayer.css">
 		<link rel="stylesheet" type="text/css" class="ui" href="css/toastr.css">
 
-        		
     </head>
     <body id="asubnonymousApp" class="header">
-        <!--[if lt IE 7]>
+        <!--[if lt IE 8]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
         
 
 		<div id="sidebarMediaList" class="ui red vertical demo sidebar menu">
 			<div data-bind="with: Asub.Content">
-				<div class="active red item">
-					<div class="ui horizontal icon divider">
-						<i class="pointNClick large left arrow icon" data-bind="click: Asub.Content.toggleMediaList"></i>
-					</div>
-				</div>
 				<div class="green ui dropdown item">
 					<div class="center text">Folders</div>
 					<i class="dropdown icon"></i>
@@ -127,7 +121,7 @@
                 <div id="rightMenu" class="right menu" style="display: inline-block;">
 				    <div class="item">
 				      <div id="searchButton" class="ui icon input">
-				      	<i class="search icon inverted" data-html="<form data-bind='submit: function(){ Asub.Search.doSearch(Asub.Search.query()); }'><div class='ui icon input'><input type='text' placeholder='Search...' data-bind='value: Asub.Search.query'></div></form>"></i>
+				      	<i class="search icon inverted" data-html="<form onsubmit='alert(\'test\')'><div class='ui icon input'><input id='queryString' type='text' placeholder='Search...'></div></form>"></i>
 				      </div>
 				    </div>
                 	<!-- ko if: Asub.Player.q().length > 0  -->
@@ -180,16 +174,6 @@
 						<div class="">
 							<!-- Front Page -->
 							<div id="frontPage" style="display: none;" class="column" data-bind="visible: Content.showFrontPage, with: Content">
-								<div class="row">					
-									<div class="column">
-										<div class="ui floated left attached button"  data-bind="click: Asub.Content.pfPrevious, css: { disabled: fpOffset() < 1 }">
-											<i class="icon left arrow"></i>Previous
-										</div>
-										<div class="ui floated right attached button"  data-bind="click: Asub.Content.pfNext">
-											Next<i class="icon right arrow"></i>
-										</div>								
-									</div>
-								</div>
 								<div class="clearFix gap"></div>
 								<div class="ui items" id="mainwrapper">
 									<!-- ko foreach: frontPageItems -->
@@ -213,12 +197,7 @@
 								<div class="clearFix gap"></div>
 								<div class="row">					
 									<div class="column">
-										<div class="ui floated left attached button"  data-bind="click: Asub.Content.pfPrevious, css: { disabled: fpOffset() < 1 }">
-											<i class="icon left arrow"></i>Previous
-										</div>
-										<div class="ui floated right attached button"  data-bind="click: Asub.Content.pfNext">
-											Next<i class="icon right arrow"></i>
-										</div>								
+										<div class="ui attached button"  data-bind="click: Asub.Content.pfNext">More</div>								
 									</div>
 								</div>
 							</div>			
@@ -522,24 +501,7 @@
 					</div>
 				</div><!-- End Container-fluid -->
 			</div><!-- end main page-->			
-	
-	
-	<!--			
-			<div id="asubAudioPlayerFD" data-spy="affix" class="navbar navbar-fixed-bottom" data-bind="slideVisible: Asub.Player.showAudioPlayer, with: Asub.Player">
-				<div class="navbar-inner">
-					<audio id="asubAudioPlayer" controls="" preload="none" width="100%" height="40" data-bind="attr: {src: currentSource()}"></audio>
-				</div>
-			</div>
-					
-	
-			<div id="asubVideoPlayerFD" class="lightbox hide" >
-					<button class="btn btn-lrg btn-danger closeVideo" data-bind="click: function(){ Asub.Player.showVideoPlayer(false); }">&times;</button>
-				<div class="lightbox-content" data-bind="if: Asub.Player.showVideoPlayer">
-				    <video id="asubVideoPlayer" width="640" height="480" data-bind="attr: {src: Asub.Player.currentSource()}"></video>
-				</div>    
-			</div>
-			<div class="black_overlay" data-bind="visible: Asub.Player.showVideoPlayer"></div>
-	-->		
+		
 			<!-- /////// End of Hidden Video Player /////-->
 	        <script src="js/vendor/jquery-1.8.3.min.js" type="text/javascript"></script>
 			<script src="js/vendor/mediaelement-and-player.js" type="text/javascript"></script>
@@ -547,6 +509,7 @@
 	        <script src="js/vendor/knockout.min.js" type="text/javascript"></script>
 	        <script src="js/vendor/plugins.js" type="text/javascript"></script>
 	        <script src="js/asub.api.js" type="text/javascript"></script>
+	        <script src="settings.js" type="text/javascript"></script>
 	        <script src="js/main.js" type="text/javascript"></script>
 		</div>
 		<!-- Login page   -->
@@ -563,15 +526,15 @@
 									<div class="ui error message" data-bind="if: error"> 
 										<p data-bind="html: error, visible: error"></p>
 									</div>					
-								 	 <div class="field">
+								 	 <div class="field" data-bind="visible: Asub.showServer">
 								        <label for="serverURL">Server URL</label>
 								        <input type="text"  id="serverURL" data-bind="value: Asub.server" placeholder="Server URL">
 								    </div>
-								    <div class="field">
+								    <div class="field" data-bind="visible: Asub.showUser">
 								        <label for="login">Username</label>
 								        <input type="text"  id="login"  data-bind="value: username" placeholder="Username">
 								    </div>
-								    <div class="field">
+								    <div class="field" data-bind="visible: Asub.showPassword">
 								        <label for="password">Password</label>
 								        <input type="password" id="password" data-bind="value: password" placeholder="Password"> 
 								    </div>
