@@ -226,8 +226,7 @@ Asub.Content = {
 			    document.getElementById("listFilter").focus();
 		    }
 		  })
-		  .sidebar('toggle')
-		;
+		  .sidebar('toggle');
 		
 	},
 	getRootFolders: function(){
@@ -361,7 +360,7 @@ Asub.Content = {
 	getAlbumList: function(){
 		Asub.API.getAlbumList({listType:Asub.Content.pflistType(), size: Asub.Content.fpCount(), offset: Asub.Content.fpOffset()},function(res){
 			if(res.status=='ok'){
-				var albums =  $.map(res.albumList.album,
+				var albums =  $.map(res.albumList.album||[],
 						function(album) {
 							if(!album.coverArt){
 								album.coverArt = false;
@@ -406,9 +405,14 @@ Asub.Content = {
 		
 	},
 	fetchFolders: function(i){
-	console.log("Get Folder:",i.id());
 		Asub.Content.rFolder(i.id());
-		Asub.Content.toggleMediaList();
+		$('#sidebarMediaList').sidebar({
+		    overlay: false,
+		    onShow: function(){
+			    document.getElementById("listFilter").focus();
+		    }
+		  })
+		  .sidebar('show');
 	}
 };
 
@@ -767,7 +771,7 @@ Asub.Player = {
 			    keyActions: []
 			});
 			
-			player.src = videoSrc;
+			player.src = Asub.Player.currentSource();
 	        player.load();
 	        player.pause();
 	        //player.play();
@@ -891,6 +895,14 @@ Asub.Content.pflistType.subscribe(function(newValue){
 
 Asub.Player.showVideoPlayer.subscribe(function(newValue){
 	if( true === newValue ){
+		if(!Asub.Player.currentPlayer()){
+			//get first item in queue and play
+			if(Asub.Player.q().length > 0){
+				Asub.Player.play(Asub.Player.q()[0]);
+			}
+		}else{
+			Asub.Player.currentPlayer().play();
+		}
 		$('#asubVideo').dimmer({
 			onHide: function(){
 				if(Asub.Player.currentPlayer()){

@@ -83,19 +83,8 @@
 				<i class="pointNClick large right arrow icon" data-bind="click: Asub.Content.toggleMediaList"></i>
 			</div>
             <div class="container">
-                <div class="title item">
-					<a href="#!/FrontPage/newest"> <i class="home icon"></i> Asub</a>
-				</div>
-				<div class="section ui dropdown link item">
-					<div class="text">Folders</div>
-					<i class="dropdown icon"></i>
-					<div class="menu" data-bind="foreach: Asub.Content.rFolders">
-						<a class="item" data-bind="html: name, click: Asub.Content.fetchFolders"></a>
-					</div>
-				</div>
-
-                <div class="section ui dropdown link item">
-					<div class="text">Lists</div>
+                <div class="title item section ui dropdown link ">
+					<a href="#!/FrontPage/newest"> <i class="home icon"></i>Asub</a>
 					<i class="dropdown icon"></i>
 					<div class="menu">
 	                  	<a class="item" href='#!/FrontPage/newest'>
@@ -126,8 +115,14 @@
 							<i class=" icon-th-list"></i> List View
 						</a>
 					</div>
-			    </div>
-			    
+				</div>
+				<div class="section ui dropdown link item">
+					<div class="text">Folders</div>
+					<i class="dropdown icon"></i>
+					<div class="menu" data-bind="foreach: Asub.Content.rFolders">
+						<a class="item" data-bind="html: name, click: Asub.Content.fetchFolders"></a>
+					</div>
+				</div>
 			    
                 <div id="rightMenu" class="right menu" style="display: inline-block;">
 				    <div class="item">
